@@ -1,0 +1,101 @@
+[2023-12-03 23:54:22.794] [main] [INFO ] com.dream.bobi.Application 48 -- [] Starting Application on admindeMacBook-Pro.local with PID 32132 (/Users/admin/IdeaProjects/bobi/server/target/classes started by admin in /Users/admin/IdeaProjects/bobi)
+[2023-12-03 23:54:22.798] [main] [INFO ] com.dream.bobi.Application 637 -- [] No active profile set, falling back to default profiles: default
+[2023-12-03 23:54:22.929] [main] [INFO ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 582 -- [] Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@616fe72b: startup date [Sun Dec 03 23:54:22 CST 2023]; root of context hierarchy
+[2023-12-03 23:54:23.514] [background-preinit] [INFO ] o.h.validator.internal.util.Version 30 -- [] HV000001: Hibernate Validator 5.3.5.Final
+[2023-12-03 23:54:24.196] [main] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate 165 -- [] Multiple Spring Data modules found, entering strict repository configuration mode!
+[2023-12-03 23:54:26.413] [main] [INFO ] o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 -- [] Tomcat initialized with port(s): 8090 (http)
+[2023-12-03 23:54:26.445] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Starting service Tomcat
+[2023-12-03 23:54:26.448] [main] [INFO ] org.apache.catalina.core.StandardEngine 179 -- [] Starting Servlet Engine: Apache Tomcat/8.5.14
+[2023-12-03 23:54:26.642] [localhost-startStop-1] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] 179 -- [] Initializing Spring embedded WebApplicationContext
+[2023-12-03 23:54:26.642] [localhost-startStop-1] [INFO ] o.s.web.context.ContextLoader 276 -- [] Root WebApplicationContext: initialization completed in 3714 ms
+[2023-12-03 23:54:27.030] [localhost-startStop-1] [INFO ] o.s.b.w.servlet.ServletRegistrationBean 190 -- [] Mapping servlet: 'dispatcherServlet' to [/]
+[2023-12-03 23:54:27.036] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'characterEncodingFilter' to: [/*]
+[2023-12-03 23:54:27.037] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[2023-12-03 23:54:27.038] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[2023-12-03 23:54:27.038] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'requestContextFilter' to: [/*]
+[2023-12-03 23:54:27.924] [main] [WARN ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 550 -- [] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userController': Unsatisfied dependency expressed through field 'userService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userServiceImpl': Unsatisfied dependency expressed through field 'userMapper'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userMapper' defined in file [/Users/admin/IdeaProjects/bobi/common/target/classes/com/dream/bobi/commons/mapper/UserMapper.class]: Invocation of init method failed; nested exception is java.lang.IllegalArgumentException: java.lang.IllegalArgumentException: Mapped Statements collection already contains value for com.dream.bobi.commons.mapper.UserMapper.selectByPrimaryKey
+[2023-12-03 23:54:27.947] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Stopping service Tomcat
+[2023-12-03 23:54:28.031] [main] [INFO ] o.s.b.a.l.AutoConfigurationReportLoggingInitializer 101 -- [] 
+
+Error starting ApplicationContext. To display the auto-configuration report re-run your application with 'debug' enabled.
+[2023-12-03 23:55:46.385] [main] [INFO ] com.dream.bobi.Application 48 -- [] Starting Application on admindeMacBook-Pro.local with PID 32142 (/Users/admin/IdeaProjects/bobi/server/target/classes started by admin in /Users/admin/IdeaProjects/bobi)
+[2023-12-03 23:55:46.391] [main] [INFO ] com.dream.bobi.Application 637 -- [] No active profile set, falling back to default profiles: default
+[2023-12-03 23:55:46.486] [main] [INFO ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 582 -- [] Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@616fe72b: startup date [Sun Dec 03 23:55:46 CST 2023]; root of context hierarchy
+[2023-12-03 23:55:46.979] [background-preinit] [INFO ] o.h.validator.internal.util.Version 30 -- [] HV000001: Hibernate Validator 5.3.5.Final
+[2023-12-03 23:55:47.734] [main] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate 165 -- [] Multiple Spring Data modules found, entering strict repository configuration mode!
+[2023-12-03 23:55:49.657] [main] [INFO ] o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 -- [] Tomcat initialized with port(s): 8090 (http)
+[2023-12-03 23:55:49.673] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Starting service Tomcat
+[2023-12-03 23:55:49.674] [main] [INFO ] org.apache.catalina.core.StandardEngine 179 -- [] Starting Servlet Engine: Apache Tomcat/8.5.14
+[2023-12-03 23:55:49.779] [localhost-startStop-1] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] 179 -- [] Initializing Spring embedded WebApplicationContext
+[2023-12-03 23:55:49.780] [localhost-startStop-1] [INFO ] o.s.web.context.ContextLoader 276 -- [] Root WebApplicationContext: initialization completed in 3294 ms
+[2023-12-03 23:55:50.082] [localhost-startStop-1] [INFO ] o.s.b.w.servlet.ServletRegistrationBean 190 -- [] Mapping servlet: 'dispatcherServlet' to [/]
+[2023-12-03 23:55:50.091] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'characterEncodingFilter' to: [/*]
+[2023-12-03 23:55:50.093] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[2023-12-03 23:55:50.094] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[2023-12-03 23:55:50.095] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'requestContextFilter' to: [/*]
+[2023-12-03 23:55:50.917] [main] [WARN ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 550 -- [] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userController': Unsatisfied dependency expressed through field 'userService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userServiceImpl': Unsatisfied dependency expressed through field 'userMapper'; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'userMapper' defined in file [/Users/admin/IdeaProjects/bobi/common/target/classes/com/dream/bobi/commons/mapper/UserMapper.class]: Invocation of init method failed; nested exception is java.lang.IllegalArgumentException: java.lang.IllegalArgumentException: Mapped Statements collection already contains value for com.dream.bobi.commons.mapper.UserMapper.selectAll
+[2023-12-03 23:55:50.920] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Stopping service Tomcat
+[2023-12-03 23:55:50.958] [main] [INFO ] o.s.b.a.l.AutoConfigurationReportLoggingInitializer 101 -- [] 
+
+Error starting ApplicationContext. To display the auto-configuration report re-run your application with 'debug' enabled.
+[2023-12-03 23:56:26.669] [main] [INFO ] com.dream.bobi.Application 48 -- [] Starting Application on admindeMacBook-Pro.local with PID 32149 (/Users/admin/IdeaProjects/bobi/server/target/classes started by admin in /Users/admin/IdeaProjects/bobi)
+[2023-12-03 23:56:26.674] [main] [INFO ] com.dream.bobi.Application 637 -- [] No active profile set, falling back to default profiles: default
+[2023-12-03 23:56:26.804] [main] [INFO ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 582 -- [] Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@616fe72b: startup date [Sun Dec 03 23:56:26 CST 2023]; root of context hierarchy
+[2023-12-03 23:56:27.405] [background-preinit] [INFO ] o.h.validator.internal.util.Version 30 -- [] HV000001: Hibernate Validator 5.3.5.Final
+[2023-12-03 23:56:28.098] [main] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate 165 -- [] Multiple Spring Data modules found, entering strict repository configuration mode!
+[2023-12-03 23:56:29.991] [main] [INFO ] o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 -- [] Tomcat initialized with port(s): 8090 (http)
+[2023-12-03 23:56:30.019] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Starting service Tomcat
+[2023-12-03 23:56:30.021] [main] [INFO ] org.apache.catalina.core.StandardEngine 179 -- [] Starting Servlet Engine: Apache Tomcat/8.5.14
+[2023-12-03 23:56:30.146] [localhost-startStop-1] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] 179 -- [] Initializing Spring embedded WebApplicationContext
+[2023-12-03 23:56:30.147] [localhost-startStop-1] [INFO ] o.s.web.context.ContextLoader 276 -- [] Root WebApplicationContext: initialization completed in 3344 ms
+[2023-12-03 23:56:30.545] [localhost-startStop-1] [INFO ] o.s.b.w.servlet.ServletRegistrationBean 190 -- [] Mapping servlet: 'dispatcherServlet' to [/]
+[2023-12-03 23:56:30.552] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'characterEncodingFilter' to: [/*]
+[2023-12-03 23:56:30.553] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[2023-12-03 23:56:30.553] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[2023-12-03 23:56:30.554] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'requestContextFilter' to: [/*]
+[2023-12-03 23:56:31.387] [main] [WARN ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 550 -- [] Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userController': Unsatisfied dependency expressed through field 'userService'; nested exception is org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'userServiceImpl': Unsatisfied dependency expressed through field 'userTokens'; nested exception is org.springframework.beans.factory.NoSuchBeanDefinitionException: No qualifying bean of type 'com.google.common.cache.Cache<java.lang.String, java.lang.Long>' available: expected at least 1 bean which qualifies as autowire candidate. Dependency annotations: {@org.springframework.beans.factory.annotation.Autowired(required=true)}
+[2023-12-03 23:56:31.392] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Stopping service Tomcat
+[2023-12-03 23:56:31.428] [main] [INFO ] o.s.b.a.l.AutoConfigurationReportLoggingInitializer 101 -- [] 
+
+Error starting ApplicationContext. To display the auto-configuration report re-run your application with 'debug' enabled.
+[2023-12-03 23:58:50.411] [main] [INFO ] com.dream.bobi.Application 48 -- [] Starting Application on admindeMacBook-Pro.local with PID 32162 (/Users/admin/IdeaProjects/bobi/server/target/classes started by admin in /Users/admin/IdeaProjects/bobi)
+[2023-12-03 23:58:50.414] [main] [INFO ] com.dream.bobi.Application 637 -- [] No active profile set, falling back to default profiles: default
+[2023-12-03 23:58:50.494] [main] [INFO ] o.s.b.c.e.AnnotationConfigEmbeddedWebApplicationContext 582 -- [] Refreshing org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@616fe72b: startup date [Sun Dec 03 23:58:50 CST 2023]; root of context hierarchy
+[2023-12-03 23:58:51.106] [background-preinit] [INFO ] o.h.validator.internal.util.Version 30 -- [] HV000001: Hibernate Validator 5.3.5.Final
+[2023-12-03 23:58:51.640] [main] [INFO ] o.s.d.r.c.RepositoryConfigurationDelegate 165 -- [] Multiple Spring Data modules found, entering strict repository configuration mode!
+[2023-12-03 23:58:53.379] [main] [INFO ] o.s.b.c.e.t.TomcatEmbeddedServletContainer 89 -- [] Tomcat initialized with port(s): 8090 (http)
+[2023-12-03 23:58:53.397] [main] [INFO ] org.apache.catalina.core.StandardService 179 -- [] Starting service Tomcat
+[2023-12-03 23:58:53.398] [main] [INFO ] org.apache.catalina.core.StandardEngine 179 -- [] Starting Servlet Engine: Apache Tomcat/8.5.14
+[2023-12-03 23:58:53.539] [localhost-startStop-1] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] 179 -- [] Initializing Spring embedded WebApplicationContext
+[2023-12-03 23:58:53.540] [localhost-startStop-1] [INFO ] o.s.web.context.ContextLoader 276 -- [] Root WebApplicationContext: initialization completed in 3046 ms
+[2023-12-03 23:58:53.814] [localhost-startStop-1] [INFO ] o.s.b.w.servlet.ServletRegistrationBean 190 -- [] Mapping servlet: 'dispatcherServlet' to [/]
+[2023-12-03 23:58:53.822] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'characterEncodingFilter' to: [/*]
+[2023-12-03 23:58:53.824] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'hiddenHttpMethodFilter' to: [/*]
+[2023-12-03 23:58:53.825] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'httpPutFormContentFilter' to: [/*]
+[2023-12-03 23:58:53.826] [localhost-startStop-1] [INFO ] o.s.b.web.servlet.FilterRegistrationBean 258 -- [] Mapping filter: 'requestContextFilter' to: [/*]
+[2023-12-03 23:58:55.419] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerAdapter 534 -- [] Looking for @ControllerAdvice: org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@616fe72b: startup date [Sun Dec 03 23:58:50 CST 2023]; root of context hierarchy
+[2023-12-03 23:58:55.577] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/user/findUserById],methods=[POST]}" onto public java.util.Map<java.lang.String, java.lang.Object> com.dream.bobi.controller.UserController.findUser(java.lang.Long)
+[2023-12-03 23:58:55.580] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/user/login],methods=[POST]}" onto public java.util.Map<java.lang.String, java.lang.Object> com.dream.bobi.controller.UserController.login(com.dream.bobi.commons.entity.UserEntity)
+[2023-12-03 23:58:55.581] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/user/getUserByToken],methods=[POST]}" onto public java.util.Map<java.lang.String, java.lang.Object> com.dream.bobi.controller.UserController.getUser(java.lang.String)
+[2023-12-03 23:58:55.583] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/user/register],methods=[POST]}" onto public java.util.Map<java.lang.String, java.lang.Object> com.dream.bobi.controller.UserController.register(com.dream.bobi.commons.entity.UserEntity)
+[2023-12-03 23:58:55.588] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/error],produces=[text/html]}" onto public org.springframework.web.servlet.ModelAndView org.springframework.boot.autoconfigure.web.BasicErrorController.errorHtml(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
+[2023-12-03 23:58:55.589] [main] [INFO ] o.s.w.s.m.m.a.RequestMappingHandlerMapping 543 -- [] Mapped "{[/error]}" onto public org.springframework.http.ResponseEntity<java.util.Map<java.lang.String, java.lang.Object>> org.springframework.boot.autoconfigure.web.BasicErrorController.error(javax.servlet.http.HttpServletRequest)
+[2023-12-03 23:58:55.666] [main] [INFO ] o.s.w.s.handler.SimpleUrlHandlerMapping 362 -- [] Mapped URL path [/webjars/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[2023-12-03 23:58:55.667] [main] [INFO ] o.s.w.s.handler.SimpleUrlHandlerMapping 362 -- [] Mapped URL path [/**] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[2023-12-03 23:58:55.796] [main] [INFO ] o.s.w.s.handler.SimpleUrlHandlerMapping 362 -- [] Mapped URL path [/**/favicon.ico] onto handler of type [class org.springframework.web.servlet.resource.ResourceHttpRequestHandler]
+[2023-12-03 23:58:56.985] [main] [INFO ] t.m.m.autoconfigure.MapperCacheDisabler 60 -- [] Clear tk.mybatis.mapper.util.MsUtil CLASS_CACHE cache.
+[2023-12-03 23:58:56.988] [main] [INFO ] t.m.m.autoconfigure.MapperCacheDisabler 60 -- [] Clear tk.mybatis.mapper.genid.GenIdUtil CACHE cache.
+[2023-12-03 23:58:56.990] [main] [INFO ] t.m.m.autoconfigure.MapperCacheDisabler 60 -- [] Clear tk.mybatis.mapper.version.VersionUtil CACHE cache.
+[2023-12-03 23:58:56.993] [main] [INFO ] t.m.m.autoconfigure.MapperCacheDisabler 83 -- [] Clear EntityHelper entityTableMap cache.
+[2023-12-03 23:58:57.124] [main] [INFO ] o.s.j.e.a.AnnotationMBeanExporter 431 -- [] Registering beans for JMX exposure on startup
+[2023-12-03 23:58:57.129] [main] [INFO ] o.s.j.e.a.AnnotationMBeanExporter 916 -- [] Bean with name 'dataSource' has been autodetected for JMX exposure
+[2023-12-03 23:58:57.138] [main] [INFO ] o.s.j.e.a.AnnotationMBeanExporter 671 -- [] Located MBean 'dataSource': registering with JMX server as MBean [com.alibaba.druid.pool:name=dataSource,type=DruidDataSource]
+[2023-12-03 23:58:57.151] [main] [INFO ] o.s.c.support.DefaultLifecycleProcessor 343 -- [] Starting beans in phase 2147483647
+[2023-12-03 23:58:57.167] [main] [INFO ] o.apache.coyote.http11.Http11NioProtocol 179 -- [] Initializing ProtocolHandler ["http-nio-8090"]
+[2023-12-03 23:58:57.186] [main] [INFO ] o.apache.coyote.http11.Http11NioProtocol 179 -- [] Starting ProtocolHandler ["http-nio-8090"]
+[2023-12-03 23:58:57.216] [main] [INFO ] o.apache.tomcat.util.net.NioSelectorPool 179 -- [] Using a shared selector for servlet write/read
+[2023-12-03 23:58:57.252] [main] [INFO ] o.s.b.c.e.t.TomcatEmbeddedServletContainer 198 -- [] Tomcat started on port(s): 8090 (http)
+[2023-12-03 23:58:57.265] [main] [INFO ] com.dream.bobi.Application 57 -- [] Started Application in 7.84 seconds (JVM running for 8.992)
+[2023-12-03 23:59:55.495] [http-nio-8090-exec-1] [INFO ] o.a.c.c.C.[Tomcat].[localhost].[/] 179 -- [] Initializing Spring FrameworkServlet 'dispatcherServlet'
+[2023-12-03 23:59:55.496] [http-nio-8090-exec-1] [INFO ] o.s.web.servlet.DispatcherServlet 489 -- [] FrameworkServlet 'dispatcherServlet': initialization started
+[2023-12-03 23:59:55.560] [http-nio-8090-exec-1] [INFO ] o.s.web.servlet.DispatcherServlet 508 -- [] FrameworkServlet 'dispatcherServlet': initialization completed in 64 ms

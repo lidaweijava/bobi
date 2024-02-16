@@ -1,0 +1,9 @@
+com/dream/bobi/support/BizException.class
+com/dream/bobi/controller/ChatController.class
+com/dream/bobi/manage/UserService.class
+com/dream/bobi/manage/TokenService.class
+com/dream/bobi/controller/UserController.class
+com/dream/bobi/log/LogAspectServiceApi.class
+com/dream/bobi/Application.class
+com/dream/bobi/manage/impl/UserServiceImpl.class
+com/dream/bobi/controller/SystemController.class
