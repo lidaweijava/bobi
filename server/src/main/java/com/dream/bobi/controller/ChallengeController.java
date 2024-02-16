@@ -62,6 +62,32 @@ public class ChallengeController extends BaseApiService {
             return setSystemError();
         }
     }
+    @PutMapping("/config")
+    public Map<String, Object> challengeSave(Challenge challenge) {
+        try {
+            challengeMapper.insertSelective(challenge);
+            return setResultSuccessData(null);
+        } catch (BizException e) {
+            log.error("challengeSave error {}", e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("challengeSave error ", e);
+            return setSystemError();
+        }
+    }
+    @DeleteMapping("/config/{challengeId}")
+    public Map<String, Object> challengeDel(@PathVariable Integer challengeId) {
+        try {
+            challengeMapper.deleteByPrimaryKey(challengeId);
+            return setResultSuccessData(null);
+        } catch (BizException e) {
+            log.error("challengeDel error {}", e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("challengeDel error ", e);
+            return setSystemError();
+        }
+    }
 
     @GetMapping("/config/list")
     public Map<String, Object> challengeConfigs() {
