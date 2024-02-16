@@ -30,6 +30,9 @@ public class BaseApiService {
    public Map<String, Object> setResultError(MsgCode msgCode) {
         return setResult(msgCode.getCode(),msgCode.getMessage(), null);
     }
+   public Map<String, Object> setResultSuccess(MsgCode msgCode) {
+        return setResult(msgCode.getCode(),msgCode.getMessage(), null);
+    }
     public Map<String, Object> setSystemError() {
         return setResult(MsgCode.SYS_ERROR.getCode(),MsgCode.SYS_ERROR.getMessage(), null);
     }

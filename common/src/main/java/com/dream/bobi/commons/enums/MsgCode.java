@@ -4,6 +4,7 @@ public enum MsgCode {
 
     /* 系统信息，以00开头 */
     SYS_OK(200, "操作成功"),
+    CHALLENGE_SUCCESS(20001, "挑战成功"),
     SYS_ERROR(50000, "系统异常"),
     SYS_ACCOUNT_ERROR(50001, "账号/密码错误"),
     SYS_USER_IS_EXIT(50002, "账号已经注册，请检查或使用其他账号注册！"),
@@ -20,6 +21,9 @@ public enum MsgCode {
     SYS_REGISTER_PHONE_NOT_VALID(500014, "手机格式不正确!"),
 
     SYS_DEDUCT_FAILED(50013, "扣减失败"),
+    CHALLENGE_CONFIG_NOT_FOUND(50014, "挑战配置未找到"),
+    CHALLENGE_FAILED(50015, "挑战失败"),
+    CHALLENGE_EXCEED_MAX_TIMES(50016, "挑战超过最大次数"),
     OTHER(59999, "其他");
 
 
