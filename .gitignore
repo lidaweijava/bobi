@@ -5,6 +5,7 @@ target/
 .project
 *.class
 .gitignore
+misc.xml
 # Compiled class file
 # Log file
 *.log

@@ -1,11 +1,5 @@
 package com.dream.bobi.commons.constants;
 
-/**
- * created on 2019/3/9 11:03
- *
- * @author nfboy_liusong@163.com
- * @version 1.0.0
- */
 public interface Constants {
 
     //用户会话保存90天

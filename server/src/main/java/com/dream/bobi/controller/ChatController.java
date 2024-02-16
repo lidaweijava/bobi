@@ -9,17 +9,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.dream.bobi.commons.api.BaseApiService;
+import com.dream.bobi.commons.api.ChatHistoryRequest;
+import com.dream.bobi.commons.entity.ChatHistory;
 import com.dream.bobi.commons.entity.UserEntity;
+import com.dream.bobi.commons.enums.MsgCode;
+import com.dream.bobi.commons.mapper.ChatHistoryMapper;
 import com.dream.bobi.manage.UserService;
 import com.dream.bobi.support.BizException;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +38,9 @@ public class ChatController extends BaseApiService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private  ChatHistoryMapper chatHistoryMapper;
 
     private Map<Long,List<Map<String, Object>>> lastChat = new ConcurrentHashMap<>();
 
@@ -123,6 +129,7 @@ public class ChatController extends BaseApiService {
                     log.error("save last message failed ", e);
                 }
                 String reply = jsonObject.getString("reply");
+                save(user.getId(),text,reply);
                 return setResultSuccessData(reply);
             }else{
                 return setResultError(baseResp.getString("status_msg"));
@@ -134,6 +141,21 @@ public class ChatController extends BaseApiService {
             log.error("chat error ",e);
             return setSystemError();
         }
+    }
+
+    private void save(long userId,String userMsg, String botMsg) {
+        List<ChatHistory> chatHistories = new ArrayList<>();
+        ChatHistory chatHistoryByUser = new ChatHistory();
+        chatHistoryByUser.setContent(userMsg);
+        chatHistoryByUser.setSide(1);
+        chatHistoryByUser.setUserId(userId);
+        ChatHistory chatHistoryByBot = new ChatHistory();
+        chatHistoryByBot.setContent(botMsg);
+        chatHistoryByBot.setSide(2);
+        chatHistoryByBot.setUserId(userId);
+        chatHistories.add(chatHistoryByUser);
+        chatHistories.add(chatHistoryByBot);
+        chatHistoryMapper.insertList(chatHistories);
     }
 
     @PostMapping("/chat/reset")
@@ -150,6 +172,27 @@ public class ChatController extends BaseApiService {
             return setResultError(e.getMsgCode());
         }catch (Exception e){
             log.error("chat reset error ",e);
+            return setSystemError();
+        }
+    }
+    @GetMapping("/chat/history")
+    public Map<String,Object> chatHistory(ChatHistoryRequest request) {
+        try {
+            if(StringUtils.isBlank(request.getToken()) || request.getStartTime() == 0 || request.getEndTime() == 0 ){
+                return setResultError(MsgCode.SYS_PARAM_ERROR);
+            }
+            UserEntity user = userService.getUser(request.getToken());
+            Example example = new Example(ChatHistory.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",user.getId());
+            criteria.andBetween("createTime",new Date(request.getStartTime()),new Date(request.getEndTime()));
+            List<ChatHistory> chatHistories = chatHistoryMapper.selectByExample(example);
+            return setResultSuccessData(chatHistories);
+        }catch (BizException e){
+            log.error("chatHistory error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("chatHistory error ",e);
             return setSystemError();
         }
     }
