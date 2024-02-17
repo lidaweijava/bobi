@@ -44,6 +44,7 @@ public class ChallengeController extends BaseApiService {
     private ChallengeRecordMapper challengeRecordMapper;
 
     private Map<Long, List<Map<String, Object>>> lastChat = new ConcurrentHashMap<>();
+    private Map<Long, Long> session = new ConcurrentHashMap<>();
 
 
     @GetMapping("/config/{challengeId}")
@@ -107,9 +108,13 @@ public class ChallengeController extends BaseApiService {
     }
 
     @GetMapping("/record/{challengeRecordId}")
-    public Map<String, Object> challengeDetail(@PathVariable Long challengeRecordId) {
+    public Map<String, Object> challengeDetail(@RequestParam String token,@PathVariable Long challengeRecordId) {
         try {
+            UserEntity user = userService.getUser(token);
             ChallengeRecord challengeRecord = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
+            if(!Objects.equals(challengeRecord.getUserId(), user.getId())){
+                return setResultError(MsgCode.CHALLENGE_NOT_FOUND);
+            }
             return setResultSuccessData(challengeRecord);
         } catch (BizException e) {
             log.error("challengeDetail error {}", e.getMsgCode().getMessage());
@@ -131,6 +136,7 @@ public class ChallengeController extends BaseApiService {
             }
             if (!CollectionUtils.isEmpty(lastMessage)) {
                 lastMessage.clear();
+                session.remove(user.getId());
             }
             ChallengeRecord challengeRecord = new ChallengeRecord();
             challengeRecord.setChallengeId(challenge.getId());
@@ -151,10 +157,31 @@ public class ChallengeController extends BaseApiService {
         }
     }
 
+    @PostMapping("/heartbeat")
+    public Map<String, Object> heartbeat(@RequestParam String token,@RequestParam Long challengeRecordId) {
+        UserEntity user = userService.getUser(token);
+        sessionExpireCheck(user.getId());
+        challengeRecordCheck(challengeRecordId);
+        sessionAdd(user.getId());
+        return setResultSuccess();
+    }
+
+    private void sessionAdd(Long userId) {
+        session.put(userId,System.currentTimeMillis());
+    }
+
+    private void challengeRecordCheck(Long challengeRecordId) {
+        ChallengeRecord challengeRecord = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
+        if(challengeRecord.getStatus() != 0){
+            throw new BizException(MsgCode.CHALLENGE_IS_OVER);
+        }
+    }
+
     @PostMapping("/chat")
     public Map<String, Object> chat(@RequestParam String token, @RequestParam String text, @RequestParam Long challengeRecordId) {
         try {
             UserEntity user = userService.getUser(token);
+            sessionExpireCheck(user.getId());
             ChallengeRecord challengeRecord = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
             Challenge challenge = challengeMapper.selectByPrimaryKey(challengeRecord.getChallengeId());
             Map<String, Object> reqBody = new HashMap<>();
@@ -184,6 +211,7 @@ public class ChallengeController extends BaseApiService {
                 lastChat.put(user.getId(), lastMessage);
                 lastMessage.add(messages);
             }
+            sessionAdd(user.getId());
             reqBody.put("messages", lastMessage);
             HttpRequest httpRequest = HttpUtil.createPost(url);
             httpRequest.header(Header.AUTHORIZATION, "Bearer " + apiKey);
@@ -213,12 +241,18 @@ public class ChallengeController extends BaseApiService {
                 Optional<String> failFound = Arrays.stream(failKeywords).filter(reply::contains).findAny();
                 if (failFound.isPresent()) {
                     saveFailResult(challengeRecordId, lastMessage.size());
-                    return setResultError(MsgCode.CHALLENGE_FAILED);
+                    for(String sk:succKeywords){
+                        reply = reply.replaceAll(sk,"");
+                    }
+                    return setResultSuccessWithData(MsgCode.CHALLENGE_FAILED,reply);
                 }
                 if (succFound.isPresent()) {
                     // save succ result
                     saveSuccessResult(challengeRecordId, lastMessage.size());
-                    return setResultSuccess(MsgCode.CHALLENGE_SUCCESS);
+                    for(String sk:succKeywords){
+                        reply = reply.replaceAll(sk,"");
+                    }
+                    return setResultSuccessWithData(MsgCode.CHALLENGE_SUCCESS,reply);
                 } else {
                     if (lastMessage.size() >= challenge.getMaxTimes()) {
                         // save fail result
@@ -237,6 +271,16 @@ public class ChallengeController extends BaseApiService {
         } catch (Exception e) {
             log.error("chat error ", e);
             return setSystemError();
+        }
+    }
+
+    private void sessionExpireCheck(Long userId) {
+        Long lastSessionTime = session.get(userId);
+        if(lastSessionTime == null ||lastSessionTime == 0){
+            return;
+        }
+        if(System.currentTimeMillis()-lastSessionTime >90*1000L){
+            throw new BizException(MsgCode.SESSION_TIMEOUT);
         }
     }
 

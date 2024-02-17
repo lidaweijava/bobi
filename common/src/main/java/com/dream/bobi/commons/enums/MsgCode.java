@@ -24,6 +24,11 @@ public enum MsgCode {
     CHALLENGE_CONFIG_NOT_FOUND(50014, "挑战配置未找到"),
     CHALLENGE_FAILED(50015, "挑战失败"),
     CHALLENGE_EXCEED_MAX_TIMES(50016, "挑战超过最大次数"),
+
+    SESSION_TIMEOUT(50017, "会话超时"),
+    CHALLENGE_IS_OVER(50018, "挑战已结束"),
+    CHALLENGE_NOT_FOUND(50019, "挑战记录未找到"),
+
     OTHER(59999, "其他");
 
 
