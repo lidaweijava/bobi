@@ -11,6 +11,8 @@ public class Challenge extends BaseEntity {
     private Integer maxTimes;
     private String successKeyword;
     private String failKeyword;
+    private String userName;
+    private String botName;
 
     public String getTitle() {
         return title;
@@ -90,5 +92,21 @@ public class Challenge extends BaseEntity {
 
     public void setFailKeyword(String failKeyword) {
         this.failKeyword = failKeyword;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getBotName() {
+        return botName;
+    }
+
+    public void setBotName(String botName) {
+        this.botName = botName;
     }
 }

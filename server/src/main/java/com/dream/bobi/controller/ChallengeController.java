@@ -141,13 +141,13 @@ public class ChallengeController extends BaseApiService {
             ChallengeRecord challengeRecord = new ChallengeRecord();
             challengeRecord.setChallengeId(challenge.getId());
             challengeRecord.setCategory(challenge.getCategory());
-            challengeRecord.setStatus(2);
+            challengeRecord.setStatus(0);
             challengeRecord.setDialogCount(0);
-            challengeRecord.setFailCause(1);
+            challengeRecord.setFailCause(0);
             challengeRecord.setUserId(user.getId());
             challengeRecord.setChallengeTime(new Date());
-            int id = challengeRecordMapper.insertSelective(challengeRecord);
-            return setResultSuccessData(id);
+            challengeRecordMapper.insertSelective(challengeRecord);
+            return setResultSuccessData(challengeRecord.getId());
         } catch (BizException e) {
             log.error("init error {}", e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());
@@ -159,35 +159,47 @@ public class ChallengeController extends BaseApiService {
 
     @PostMapping("/heartbeat")
     public Map<String, Object> heartbeat(@RequestParam String token,@RequestParam Long challengeRecordId) {
-        UserEntity user = userService.getUser(token);
-        sessionExpireCheck(user.getId());
-        challengeRecordCheck(challengeRecordId);
-        sessionAdd(user.getId());
-        return setResultSuccess();
+        try {
+            UserEntity user = userService.getUser(token);
+            challengeRecordCheck(challengeRecordId);
+            sessionExpireCheckAndSaveIfExpire(user.getId(),challengeRecordId);
+            sessionAdd(user.getId());
+            return setResultSuccess();
+        } catch (BizException e) {
+            log.error("heartbeat error {}", e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("heartbeat error ", e);
+            return setSystemError();
+        }
     }
 
     private void sessionAdd(Long userId) {
         session.put(userId,System.currentTimeMillis());
     }
 
-    private void challengeRecordCheck(Long challengeRecordId) {
+    private ChallengeRecord challengeRecordCheck(Long challengeRecordId) {
         ChallengeRecord challengeRecord = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
+        if(challengeRecord == null){
+            throw new BizException(MsgCode.CHALLENGE_NOT_FOUND);
+        }
         if(challengeRecord.getStatus() != 0){
             throw new BizException(MsgCode.CHALLENGE_IS_OVER);
         }
+        return challengeRecord;
     }
 
     @PostMapping("/chat")
     public Map<String, Object> chat(@RequestParam String token, @RequestParam String text, @RequestParam Long challengeRecordId) {
         try {
             UserEntity user = userService.getUser(token);
-            sessionExpireCheck(user.getId());
-            ChallengeRecord challengeRecord = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
+            ChallengeRecord challengeRecord = challengeRecordCheck(challengeRecordId);
+            sessionExpireCheckAndSaveIfExpire(user.getId(),challengeRecordId);
             Challenge challenge = challengeMapper.selectByPrimaryKey(challengeRecord.getChallengeId());
             Map<String, Object> reqBody = new HashMap<>();
             Map<String, Object> messages = new HashMap<>();
             messages.put("sender_type", "USER");
-            messages.put("sender_name", "主人");
+            messages.put("sender_name", challenge.getUserName());
             messages.put("text", text);
             reqBody.put("model", "abab5.5-chat");
             reqBody.put("tokens_to_generate", 1034);
@@ -195,11 +207,11 @@ public class ChallengeController extends BaseApiService {
             reqBody.put("top_p", 0.95);
             Map<String, String> constraint = new HashMap<>();
             constraint.put("sender_type", "BOT");
-            constraint.put("sender_name", "智能宠物助理");
+            constraint.put("sender_name", challenge.getBotName());
             reqBody.put("reply_constraints", constraint);
             List<Map> botSetting = new ArrayList<>();
             Map<String, String> sett = new HashMap<>();
-            sett.put("bot_name", "智能宠物助理");
+            sett.put("bot_name", challenge.getBotName());
             sett.put("content", challenge.getAiDetail() + "\n" + challenge.getSampleDialog());
             botSetting.add(sett);
             reqBody.put("bot_setting", botSetting);
@@ -227,7 +239,7 @@ public class ChallengeController extends BaseApiService {
                     String reply = jsonObject.getString("reply");
                     Map<String, Object> botMessage = new HashMap<>();
                     botMessage.put("sender_type", "BOT");
-                    botMessage.put("sender_name", "智能宠物助理");
+                    botMessage.put("sender_name", challenge.getBotName());
                     botMessage.put("text", reply);
                     List<Map<String, Object>> lastMs = lastChat.get(user.getId());
                     lastMs.add(botMessage);
@@ -274,12 +286,16 @@ public class ChallengeController extends BaseApiService {
         }
     }
 
-    private void sessionExpireCheck(Long userId) {
+    private void sessionExpireCheckAndSaveIfExpire(Long userId,Long challengeRecordId) {
         Long lastSessionTime = session.get(userId);
         if(lastSessionTime == null ||lastSessionTime == 0){
             return;
         }
         if(System.currentTimeMillis()-lastSessionTime >90*1000L){
+            ChallengeRecord challengeRecord = new ChallengeRecord();
+            challengeRecord.setId(challengeRecordId);
+            challengeRecord.setStatus(3);
+            challengeRecordMapper.updateByPrimaryKeySelective(challengeRecord);
             throw new BizException(MsgCode.SESSION_TIMEOUT);
         }
     }

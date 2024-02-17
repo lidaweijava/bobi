@@ -1,6 +1,9 @@
 package com.dream.bobi.commons.entity;
 
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.util.Date;
 
 public class BaseEntity {
@@ -8,8 +11,9 @@ public class BaseEntity {
     /**
      * 主键
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     /**
      * 创建时间
      */
