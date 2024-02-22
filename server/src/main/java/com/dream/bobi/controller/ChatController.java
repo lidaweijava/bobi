@@ -48,6 +48,7 @@ public class ChatController extends BaseApiService {
     public Map<String,Object> chat(@RequestParam String token, @RequestParam String text) {
         try {
             UserEntity user = userService.getUser(token);
+            log.info("chat:{}",text);
             Map<String, Object> reqBody = new HashMap<>();
             Map<String, Object> messages = new HashMap<>();
             messages.put("sender_type", "USER");
@@ -110,6 +111,8 @@ public class ChatController extends BaseApiService {
             httpRequest.header(Header.AUTHORIZATION, "Bearer " + apiKey);
             httpRequest.header(Header.CONTENT_TYPE, "application/json");
             httpRequest.body(JSON.toJSONString(reqBody));
+            httpRequest.setReadTimeout(5000);
+            httpRequest.setConnectionTimeout(5000);
             HttpResponse response = httpRequest.execute();
             String body = response.body();
             log.info("reply:{}", body);
