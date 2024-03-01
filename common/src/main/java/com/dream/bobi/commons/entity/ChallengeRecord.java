@@ -11,6 +11,8 @@ public class ChallengeRecord extends BaseEntity {
     private Integer status;
     private Integer dialogCount;
     private Character grade;
+
+    //0：未知,1:50次未通过,2:放弃
     private Integer failCause;
 
     public Long getUserId() {

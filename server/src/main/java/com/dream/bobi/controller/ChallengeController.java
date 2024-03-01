@@ -157,6 +157,38 @@ public class ChallengeController extends BaseApiService {
         }
     }
 
+
+    @PostMapping("/stop")
+    public Map<String, Object> stop(@RequestParam String token, @RequestParam Long challengeRecordId) {
+        try {
+            UserEntity user = userService.getUser(token);
+            List<Map<String, Object>> lastMessage = lastChat.get(user.getId());
+            ChallengeRecord exited = challengeRecordMapper.selectByPrimaryKey(challengeRecordId);
+            if (exited == null) {
+                return setResultError(MsgCode.CHALLENGE_NOT_FOUND);
+            }
+            if(!Objects.equals(user.getId(), exited.getUserId())){
+                return setResultError(MsgCode.CHALLENGE_NOT_FOUND);
+            }
+            if (!CollectionUtils.isEmpty(lastMessage)) {
+                lastMessage.clear();
+                session.remove(user.getId());
+            }
+            ChallengeRecord challengeRecord = new ChallengeRecord();
+            challengeRecord.setId(challengeRecordId);
+            challengeRecord.setStatus(1);
+            challengeRecord.setFailCause(2);
+            challengeRecordMapper.updateByPrimaryKeySelective(challengeRecord);
+            return setResultSuccessData(challengeRecord.getId());
+        } catch (BizException e) {
+            log.error("stop error {}", e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("stop error ", e);
+            return setSystemError();
+        }
+    }
+
     @PostMapping("/heartbeat")
     public Map<String, Object> heartbeat(@RequestParam String token,@RequestParam Long challengeRecordId) {
         try {
@@ -193,6 +225,7 @@ public class ChallengeController extends BaseApiService {
     public Map<String, Object> chat(@RequestParam String token, @RequestParam String text, @RequestParam Long challengeRecordId) {
         try {
             UserEntity user = userService.getUser(token);
+            log.info("chat:{}",text);
             ChallengeRecord challengeRecord = challengeRecordCheck(challengeRecordId);
             sessionExpireCheckAndSaveIfExpire(user.getId(),challengeRecordId);
             Challenge challenge = challengeMapper.selectByPrimaryKey(challengeRecord.getChallengeId());
