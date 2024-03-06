@@ -1,6 +1,7 @@
 package com.dream.bobi.commons.entity;
 
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,6 +18,8 @@ public class BaseEntity {
     /**
      * 创建时间
      */
+
+    @Column(name="create_time")
     private Date createTime;
 
     /**

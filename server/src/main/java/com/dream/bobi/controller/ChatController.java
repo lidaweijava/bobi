@@ -24,6 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -188,7 +189,8 @@ public class ChatController extends BaseApiService {
             Example example = new Example(ChatHistory.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("userId",user.getId());
-            criteria.andBetween("createTime",new Date(request.getStartTime()),new Date(request.getEndTime()));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            criteria.andBetween("createTime", simpleDateFormat.format(new Date(request.getStartTime())), simpleDateFormat.format(new Date(request.getEndTime())));
             List<ChatHistory> chatHistories = chatHistoryMapper.selectByExample(example);
             return setResultSuccessData(chatHistories);
         }catch (BizException e){
