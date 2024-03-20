@@ -8,8 +8,7 @@ import java.util.concurrent.TimeUnit;
 public class TokenService {
     public static final Cache<String, Long> userTokens = CacheBuilder.newBuilder()
                 .maximumSize(10000)
-                .expireAfterAccess(24, TimeUnit.HOURS)
+                .expireAfterAccess(24*30, TimeUnit.HOURS)
                 //移除通知
                 .build();
-
 }
