@@ -183,14 +183,14 @@ public class ChatController extends BaseApiService {
         UserMonthlyState userMonthlyStateInDB = userMonthlyStateMapper.selectOne(userMonthlyState);
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
         if(userMonthlyStateInDB == null){
-            long value = (long) currentDayOfMonth << 1;
+            long value = (long) 1<< currentDayOfMonth;
             userMonthlyState.setChatStateBit(value);
             userMonthlyStateMapper.insert(userMonthlyState);
             updateChatStateInMemory(userId);
         }else{
             long chatStateBit = userMonthlyStateInDB.getChatStateBit();
             if(NumberUtil.isBitZero(chatStateBit,currentDayOfMonth)){
-                long value = (long) currentDayOfMonth << 1;
+                long value = (long) 1<<currentDayOfMonth;
                 userMonthlyState.setChatStateBit(chatStateBit&value);
                 userMonthlyStateMapper.updateByPrimaryKey(userMonthlyState);
                 updateChatStateInMemory(userId);
@@ -226,16 +226,22 @@ public class ChatController extends BaseApiService {
                 currentValue = currentMonthMemoryRecord;
 
             }
+        }else{
+            userMonthState = new HashMap<>();
+            userChatState.put(userId,userMonthState);
         }
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
-        long value = (long) currentDayOfMonth << 1;
+        long value = (long) 1 << currentDayOfMonth;
         userMonthState.put(yearAndMonth,currentValue&value);
     }
+
+
+
     private void fillChatStateInMemory(long currentValue,Long userId){
         String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
         Map<String, Long> userMonthState = userChatState.get(userId);
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
-        long value = (long) currentDayOfMonth << 1;
+        long value = (long) 1<< currentDayOfMonth;
         if(userMonthState == null){
             userMonthState = new HashMap<>();
             userChatState.put(userId,userMonthState);
