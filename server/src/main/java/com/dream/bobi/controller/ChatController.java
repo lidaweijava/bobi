@@ -1,6 +1,9 @@
 package com.dream.bobi.controller;
 
 
+import cn.hutool.bloomfilter.bitMap.BitMap;
+import cn.hutool.bloomfilter.bitMap.IntMap;
+import cn.hutool.core.map.MapUtil;
 import cn.hutool.http.Header;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
@@ -12,8 +15,12 @@ import com.dream.bobi.commons.api.BaseApiService;
 import com.dream.bobi.commons.api.ChatHistoryRequest;
 import com.dream.bobi.commons.entity.ChatHistory;
 import com.dream.bobi.commons.entity.UserEntity;
+import com.dream.bobi.commons.entity.UserMonthlyState;
 import com.dream.bobi.commons.enums.MsgCode;
 import com.dream.bobi.commons.mapper.ChatHistoryMapper;
+import com.dream.bobi.commons.mapper.UserMonthlyStateMapper;
+import com.dream.bobi.commons.utils.DateUtils;
+import com.dream.bobi.commons.utils.NumberUtil;
 import com.dream.bobi.manage.UserService;
 import com.dream.bobi.support.BizException;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +50,11 @@ public class ChatController extends BaseApiService {
     @Autowired
     private  ChatHistoryMapper chatHistoryMapper;
 
+    @Autowired
+    private UserMonthlyStateMapper userMonthlyStateMapper;
+
     private Map<Long,List<Map<String, Object>>> lastChat = new ConcurrentHashMap<>();
+    private static Map<Long,Map<String, Long>> userChatState = new ConcurrentHashMap<>();
 
     @PostMapping("/chat")
     public Map<String,Object> chat(@RequestParam String token, @RequestParam String text) {
@@ -160,7 +171,78 @@ public class ChatController extends BaseApiService {
         chatHistories.add(chatHistoryByUser);
         chatHistories.add(chatHistoryByBot);
         chatHistoryMapper.insertList(chatHistories);
+
+        boolean hasChatInMemory = todayHasChatInMemory(userId);
+        if(hasChatInMemory){
+            return;
+        }
+        String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
+        UserMonthlyState userMonthlyState = new UserMonthlyState();
+        userMonthlyState.setUserId(userId);
+        userMonthlyState.setMonth(yearAndMonth);
+        UserMonthlyState userMonthlyStateInDB = userMonthlyStateMapper.selectOne(userMonthlyState);
+        int currentDayOfMonth = DateUtils.currentDayOfMonth();
+        if(userMonthlyStateInDB == null){
+            long value = (long) currentDayOfMonth << 1;
+            userMonthlyState.setChatStateBit(value);
+            userMonthlyStateMapper.insert(userMonthlyState);
+            updateChatStateInMemory(userId);
+        }else{
+            long chatStateBit = userMonthlyStateInDB.getChatStateBit();
+            if(NumberUtil.isBitZero(chatStateBit,currentDayOfMonth)){
+                long value = (long) currentDayOfMonth << 1;
+                userMonthlyState.setChatStateBit(chatStateBit&value);
+                userMonthlyStateMapper.updateByPrimaryKey(userMonthlyState);
+                updateChatStateInMemory(userId);
+                fillChatStateInMemory(chatStateBit,userId);
+            }
+        }
+
+
+
     }
+
+    private static boolean todayHasChatInMemory(Long userId){
+        Map<String, Long> userMonthState = userChatState.get(userId);
+        if(MapUtil.isEmpty(userMonthState)){
+            return false;
+        }
+        String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
+        Long currentMonthMemoryRecord = userMonthState.get(yearAndMonth);
+        if(currentMonthMemoryRecord == null){
+            return false;
+        }
+        int currentDayOfMonth = DateUtils.currentDayOfMonth();
+       return !NumberUtil.isBitZero(currentMonthMemoryRecord,currentDayOfMonth);
+    }
+
+    private void updateChatStateInMemory(Long userId){
+        long currentValue=0;
+        String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
+        Map<String, Long> userMonthState = userChatState.get(userId);
+        if(MapUtil.isNotEmpty(userMonthState)){
+            Long currentMonthMemoryRecord = userMonthState.get(yearAndMonth);
+            if(currentMonthMemoryRecord != null){
+                currentValue = currentMonthMemoryRecord;
+
+            }
+        }
+        int currentDayOfMonth = DateUtils.currentDayOfMonth();
+        long value = (long) currentDayOfMonth << 1;
+        userMonthState.put(yearAndMonth,currentValue&value);
+    }
+    private void fillChatStateInMemory(long currentValue,Long userId){
+        String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
+        Map<String, Long> userMonthState = userChatState.get(userId);
+        int currentDayOfMonth = DateUtils.currentDayOfMonth();
+        long value = (long) currentDayOfMonth << 1;
+        if(userMonthState == null){
+            userMonthState = new HashMap<>();
+            userChatState.put(userId,userMonthState);
+        }
+        userMonthState.put(yearAndMonth, currentValue & value);
+    }
+
 
     @PostMapping("/chat/reset")
     public Map<String,Object> reset(@RequestParam String token) {
@@ -198,6 +280,40 @@ public class ChatController extends BaseApiService {
             return setResultError(e.getMsgCode());
         }catch (Exception e){
             log.error("chatHistory error ",e);
+            return setSystemError();
+        }
+    }
+    @GetMapping("/chat/historyState")
+    public Map<String,Object> chatHistoryState(@RequestParam String token,@RequestParam String month) {
+        try {
+            if(StringUtils.isBlank(token) || StringUtils.isBlank(month) ){
+                return setResultError(MsgCode.SYS_PARAM_ERROR);
+            }
+            UserEntity user = userService.getUser(token);
+            Map<String, Long> chatState = userChatState.get(user.getId());
+            String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
+            String monthState;
+            if(MapUtil.isNotEmpty(chatState)){
+                Long value = chatState.get(yearAndMonth);
+                monthState = Long.toBinaryString(value);
+            }else{
+                UserMonthlyState userMonthlyState = new UserMonthlyState();
+                userMonthlyState.setUserId(user.getId());
+                userMonthlyState.setMonth(yearAndMonth);
+                UserMonthlyState userMonthlyStateExist = userMonthlyStateMapper.selectOne(userMonthlyState);
+                if(userMonthlyStateExist != null){
+                    Long chatStateBit = userMonthlyStateExist.getChatStateBit();
+                    monthState = Long.toBinaryString(chatStateBit);
+                }else{
+                    monthState="";
+                }
+            }
+            return setResultSuccessData(monthState);
+        }catch (BizException e){
+            log.error("chatHistoryState error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("chatHistoryState error ",e);
             return setSystemError();
         }
     }

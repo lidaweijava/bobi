@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -117,4 +119,23 @@ public class DateUtils {
     public static Timestamp getTimestamp() {
         return new Timestamp(new Date().getTime());
     }
+
+    public static String calcCurrentYearAndMonth(){
+            // 获取当前日期
+            LocalDate currentDate = LocalDate.now();
+
+            // 获取当前年份
+            int year = currentDate.getYear();
+            // 获取当前月份
+            int month = currentDate.getMonthValue();
+            // 输出结果
+
+        return year+String.valueOf(month<10?"0"+month:month);
+    }
+
+    public static int currentDayOfMonth(){
+        Calendar calendar = Calendar.getInstance();
+        return calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
 }

@@ -195,7 +195,7 @@ public class ChallengeController extends BaseApiService {
             UserEntity user = userService.getUser(token);
             challengeRecordCheck(challengeRecordId);
             sessionExpireCheckAndSaveIfExpire(user.getId(),challengeRecordId);
-            sessionAdd(user.getId());
+            sessionAdd(challengeRecordId);
             return setResultSuccess();
         } catch (BizException e) {
             log.error("heartbeat error {}", e.getMsgCode().getMessage());
@@ -206,8 +206,8 @@ public class ChallengeController extends BaseApiService {
         }
     }
 
-    private void sessionAdd(Long userId) {
-        session.put(userId,System.currentTimeMillis());
+    private void sessionAdd(Long challengeRecordId) {
+        session.put(challengeRecordId,System.currentTimeMillis());
     }
 
     private ChallengeRecord challengeRecordCheck(Long challengeRecordId) {
@@ -256,7 +256,7 @@ public class ChallengeController extends BaseApiService {
                 lastChat.put(user.getId(), lastMessage);
                 lastMessage.add(messages);
             }
-            sessionAdd(user.getId());
+            sessionAdd(challengeRecordId);
             reqBody.put("messages", lastMessage);
             HttpRequest httpRequest = HttpUtil.createPost(url);
             httpRequest.header(Header.AUTHORIZATION, "Bearer " + apiKey);
@@ -320,7 +320,7 @@ public class ChallengeController extends BaseApiService {
     }
 
     private void sessionExpireCheckAndSaveIfExpire(Long userId,Long challengeRecordId) {
-        Long lastSessionTime = session.get(userId);
+        Long lastSessionTime = session.get(challengeRecordId);
         if(lastSessionTime == null ||lastSessionTime == 0){
             return;
         }
