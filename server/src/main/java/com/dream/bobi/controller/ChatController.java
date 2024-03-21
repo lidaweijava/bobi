@@ -191,9 +191,12 @@ public class ChatController extends BaseApiService {
             long chatStateBit = userMonthlyStateInDB.getChatStateBit();
             if(NumberUtil.isBitZero(chatStateBit,currentDayOfMonth)){
                 long value = (long) 1<<currentDayOfMonth;
-                userMonthlyState.setChatStateBit(chatStateBit&value);
-                userMonthlyStateMapper.updateByPrimaryKey(userMonthlyState);
-                updateChatStateInMemory(userId);
+                long newValue = chatStateBit ^ value;
+                userMonthlyState.setChatStateBit(newValue);
+                userMonthlyState.setId(userMonthlyStateInDB.getId());
+                userMonthlyStateMapper.updateByPrimaryKeySelective(userMonthlyState);
+                fillChatStateInMemory(chatStateBit,userId);
+            }else{
                 fillChatStateInMemory(chatStateBit,userId);
             }
         }
@@ -232,7 +235,7 @@ public class ChatController extends BaseApiService {
         }
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
         long value = (long) 1 << currentDayOfMonth;
-        userMonthState.put(yearAndMonth,currentValue&value);
+        userMonthState.put(yearAndMonth,currentValue^value);
     }
 
 
@@ -246,7 +249,7 @@ public class ChatController extends BaseApiService {
             userMonthState = new HashMap<>();
             userChatState.put(userId,userMonthState);
         }
-        userMonthState.put(yearAndMonth, currentValue & value);
+        userMonthState.put(yearAndMonth, currentValue ^ value);
     }
 
 
@@ -301,20 +304,21 @@ public class ChatController extends BaseApiService {
             String monthState;
             if(MapUtil.isNotEmpty(chatState)){
                 Long value = chatState.get(yearAndMonth);
-                monthState = Long.toBinaryString(value);
-            }else{
-                UserMonthlyState userMonthlyState = new UserMonthlyState();
-                userMonthlyState.setUserId(user.getId());
-                userMonthlyState.setMonth(yearAndMonth);
-                UserMonthlyState userMonthlyStateExist = userMonthlyStateMapper.selectOne(userMonthlyState);
-                if(userMonthlyStateExist != null){
-                    Long chatStateBit = userMonthlyStateExist.getChatStateBit();
-                    monthState = Long.toBinaryString(chatStateBit);
-                }else{
-                    monthState="";
+                if(value != null ){
+                    monthState = Long.toBinaryString(value);
+                    return setResultSuccessData(monthState);
                 }
             }
-            return setResultSuccessData(monthState);
+            UserMonthlyState userMonthlyState = new UserMonthlyState();
+            userMonthlyState.setUserId(user.getId());
+            userMonthlyState.setMonth(yearAndMonth);
+            UserMonthlyState userMonthlyStateExist = userMonthlyStateMapper.selectOne(userMonthlyState);
+            if(userMonthlyStateExist != null){
+                Long chatStateBit = userMonthlyStateExist.getChatStateBit();
+                monthState = Long.toBinaryString(chatStateBit);
+                return setResultSuccessData(monthState);
+            }
+            return setResultSuccessData(0);
         }catch (BizException e){
             log.error("chatHistoryState error {}",e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());
