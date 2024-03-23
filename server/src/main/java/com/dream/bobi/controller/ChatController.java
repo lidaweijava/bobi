@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -300,10 +301,9 @@ public class ChatController extends BaseApiService {
             }
             UserEntity user = userService.getUser(token);
             Map<String, Long> chatState = userChatState.get(user.getId());
-            String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
             String monthState;
             if(MapUtil.isNotEmpty(chatState)){
-                Long value = chatState.get(yearAndMonth);
+                Long value = chatState.get(month);
                 if(value != null ){
                     monthState = Long.toBinaryString(value);
                     return setResultSuccessData(monthState);
@@ -311,14 +311,17 @@ public class ChatController extends BaseApiService {
             }
             UserMonthlyState userMonthlyState = new UserMonthlyState();
             userMonthlyState.setUserId(user.getId());
-            userMonthlyState.setMonth(yearAndMonth);
+            userMonthlyState.setMonth(month);
             UserMonthlyState userMonthlyStateExist = userMonthlyStateMapper.selectOne(userMonthlyState);
             if(userMonthlyStateExist != null){
                 Long chatStateBit = userMonthlyStateExist.getChatStateBit();
+                chatStateBit = (chatStateBit^ (long) Math.pow(2,DateUtils.calcDaysInMonth(month)));
                 monthState = Long.toBinaryString(chatStateBit);
-                return setResultSuccessData(monthState);
+                return setResultSuccessData(monthState.substring(1));
             }
-            return setResultSuccessData(0);
+            long defaultZero = ((long) Math.pow(2,DateUtils.calcDaysInMonth(month)));
+            monthState = Long.toBinaryString(defaultZero);
+            return setResultSuccessData(monthState.substring(1));
         }catch (BizException e){
             log.error("chatHistoryState error {}",e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());
@@ -327,5 +330,4 @@ public class ChatController extends BaseApiService {
             return setSystemError();
         }
     }
-
 }
