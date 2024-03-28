@@ -1,5 +1,6 @@
 package com.dream.bobi.manage;
 
+import com.dream.bobi.commons.api.LoginRequest;
 import com.dream.bobi.commons.entity.UserEntity;
 
 
@@ -31,4 +32,6 @@ public interface UserService {
 
     public Long recharge(Long userId,Long money);
     Long deduct(Long userId, Long money);
+
+    String loginWithCode(LoginRequest loginRequest);
 }

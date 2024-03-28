@@ -1,6 +1,7 @@
 package com.dream.bobi.manage.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.dream.bobi.commons.api.LoginRequest;
 import com.dream.bobi.manage.TokenService;
 import com.dream.bobi.support.BizException;
 import com.dream.bobi.commons.entity.User;
@@ -80,6 +81,28 @@ public class UserServiceImpl implements UserService {
         existUser.setId(user.getId());
         existUser.setLastLoginTime(DateUtils.getTimestamp());
         userMapper.updateByPrimaryKeySelective(existUser);
+        return setLoginToken(user.getId());
+    }
+
+    @Override
+    public String loginWithCode(LoginRequest loginRequest) {
+        User user = new User();
+        user.setPhone(loginRequest.getPhone());
+        User userInDB = userMapper.selectOne(user);
+        if(userInDB == null){
+            return createUserAndLogin(loginRequest);
+        }
+        return setLoginToken(userInDB.getId());
+    }
+
+    private String createUserAndLogin(LoginRequest loginRequest) {
+        User user = new User();
+        user.setPhone(loginRequest.getPhone());
+        user.setPassword(md5PassSalt(loginRequest.getPhone(), "123456"));
+        user.setEmail("");
+        user.setToken("");
+        user.setUserName("bobiUser_"+loginRequest.getPhone().substring(8));
+        userMapper.insertSelective(user);
         return setLoginToken(user.getId());
     }
 

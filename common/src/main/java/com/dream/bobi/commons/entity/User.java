@@ -1,14 +1,10 @@
 package com.dream.bobi.commons.entity;
 
-import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
 @Table(name="user")
-public class User {
-
-    @Id
-    private Long id;
+public class User extends BaseEntity{
 
     private String userName;
 
@@ -28,17 +24,6 @@ public class User {
 
     private Long money;
 
-    private Date createTime;
-
-    private Date updateTime;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getUserName() {
         return userName;
@@ -112,19 +97,4 @@ public class User {
         this.money = money;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
 }

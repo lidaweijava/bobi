@@ -23,6 +23,14 @@ public interface UserApi {
      */
     @PostMapping("/login")
     public Map<String, Object> login(@RequestBody UserEntity userEntity);
+    /**
+     * 描述：登录成功后，生成对应的 Token，作为 Key，将用户 userId 作为 value 存放在 redis 中，返回 Token 给客户端
+     * 登陆功能
+     *
+     * @return
+     */
+    @PostMapping("/loginWithCode")
+    public Map<String, Object> loginWithCode(@RequestBody LoginRequest loginRequest);
 
     /**
      * 使用 Token 查找用户信息

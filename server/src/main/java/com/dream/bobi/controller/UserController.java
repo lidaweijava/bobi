@@ -1,6 +1,7 @@
 package com.dream.bobi.controller;
 
 
+import com.dream.bobi.commons.api.LoginRequest;
 import com.dream.bobi.support.BizException;
 import com.dream.bobi.commons.api.BaseApiService;
 import com.dream.bobi.commons.api.UserApi;
@@ -88,6 +89,34 @@ public class UserController extends BaseApiService implements UserApi {
             return setSystemError();
         }
     }
+
+
+    @Override
+    public Map<String, Object> loginWithCode(@RequestBody LoginRequest loginRequest) {
+        if (StringUtils.isEmpty(loginRequest.getPhone())){
+            return setResultParameterError(MsgCode.SYS_PHONE_NOT_NULL);
+        }
+        if (StringUtils.isEmpty(loginRequest.getCode())){
+            return setResultParameterError(MsgCode.VERIFY_CODE_NOT_NULL);
+        }
+        String regex = "^1[3-9]\\d{9}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(loginRequest.getPhone());
+        if (!matcher.matches()) {
+            return setResultParameterError(MsgCode.SYS_REGISTER_PHONE_NOT_VALID);
+        }
+        try {
+            String token = userService.loginWithCode(loginRequest);
+            return setResultSuccessData(token);
+        }catch (BizException e){
+            log.error("loginWithCode error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("loginWithCode error ",e);
+            return setSystemError();
+        }
+    }
+
 
     @Override
     public Map<String, Object> getUser(@RequestParam("token") String token) {

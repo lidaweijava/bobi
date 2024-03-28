@@ -184,14 +184,14 @@ public class ChatController extends BaseApiService {
         UserMonthlyState userMonthlyStateInDB = userMonthlyStateMapper.selectOne(userMonthlyState);
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
         if(userMonthlyStateInDB == null){
-            long value = (long) 1<< currentDayOfMonth;
+            long value = (long) 1<< (currentDayOfMonth-1);
             userMonthlyState.setChatStateBit(value);
             userMonthlyStateMapper.insert(userMonthlyState);
             updateChatStateInMemory(userId);
         }else{
             long chatStateBit = userMonthlyStateInDB.getChatStateBit();
             if(NumberUtil.isBitZero(chatStateBit,currentDayOfMonth)){
-                long value = (long) 1<<currentDayOfMonth;
+                long value = (long) 1<<(currentDayOfMonth-1);
                 long newValue = chatStateBit ^ value;
                 userMonthlyState.setChatStateBit(newValue);
                 userMonthlyState.setId(userMonthlyStateInDB.getId());
@@ -245,7 +245,7 @@ public class ChatController extends BaseApiService {
         String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
         Map<String, Long> userMonthState = userChatState.get(userId);
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
-        long value = (long) 1<< currentDayOfMonth;
+        long value = (long) 1<< (currentDayOfMonth-1);
         if(userMonthState == null){
             userMonthState = new HashMap<>();
             userChatState.put(userId,userMonthState);
@@ -281,7 +281,7 @@ public class ChatController extends BaseApiService {
             Example example = new Example(ChatHistory.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("userId",user.getId());
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             criteria.andBetween("createTime", simpleDateFormat.format(new Date(request.getStartTime())), simpleDateFormat.format(new Date(request.getEndTime())));
             List<ChatHistory> chatHistories = chatHistoryMapper.selectByExample(example);
             return setResultSuccessData(chatHistories);

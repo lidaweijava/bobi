@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -156,6 +158,14 @@ public class DateUtils {
         }
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
+        LocalDate now = LocalDate.now();
+        LocalDate localDate = date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        long monthsBetween = ChronoUnit.MONTHS.between(localDate, now);
+        if(monthsBetween == 0){
+            return now.getDayOfMonth();
+        }
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 

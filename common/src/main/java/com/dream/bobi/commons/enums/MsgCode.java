@@ -28,6 +28,7 @@ public enum MsgCode {
     SESSION_TIMEOUT(50017, "会话超时"),
     CHALLENGE_IS_OVER(50018, "挑战已结束"),
     CHALLENGE_NOT_FOUND(50019, "挑战记录未找到"),
+    VERIFY_CODE_NOT_NULL(50020, "验证码不能为空!"),
 
     OTHER(59999, "其他");
 
