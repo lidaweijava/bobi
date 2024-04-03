@@ -235,13 +235,11 @@ public class ChatController extends BaseApiService {
             userChatState.put(userId,userMonthState);
         }
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
-        long value = (long) 1 << currentDayOfMonth;
+        long value = (long) 1 << (currentDayOfMonth-1);
         userMonthState.put(yearAndMonth,currentValue^value);
     }
 
-
-
-    private void fillChatStateInMemory(long currentValue,Long userId){
+    private void fillChatStateInMemory(long currentValue, Long userId){
         String yearAndMonth = DateUtils.calcCurrentYearAndMonth();
         Map<String, Long> userMonthState = userChatState.get(userId);
         int currentDayOfMonth = DateUtils.currentDayOfMonth();
@@ -252,6 +250,7 @@ public class ChatController extends BaseApiService {
         }
         userMonthState.put(yearAndMonth, currentValue ^ value);
     }
+
 
 
     @PostMapping("/chat/reset")
