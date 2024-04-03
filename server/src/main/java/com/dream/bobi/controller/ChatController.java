@@ -302,6 +302,7 @@ public class ChatController extends BaseApiService {
             UserEntity user = userService.getUser(token);
             Map<String, Long> chatState = userChatState.get(user.getId());
             String monthState;
+            log.info("ChatController chatHistoryState, the chatState = {}", chatState);
             if(MapUtil.isNotEmpty(chatState)){
                 Long value = chatState.get(month);
                 if(value != null ){
@@ -313,6 +314,7 @@ public class ChatController extends BaseApiService {
             userMonthlyState.setUserId(user.getId());
             userMonthlyState.setMonth(month);
             UserMonthlyState userMonthlyStateExist = userMonthlyStateMapper.selectOne(userMonthlyState);
+            log.info("ChatController chatHistoryState, the userMonthlyStateExist = {}", JSON.toJSONString(userMonthlyStateExist));
             if(userMonthlyStateExist != null){
                 Long chatStateBit = userMonthlyStateExist.getChatStateBit();
                 chatStateBit = (chatStateBit^ (long) Math.pow(2,DateUtils.calcDaysInMonth(month)));

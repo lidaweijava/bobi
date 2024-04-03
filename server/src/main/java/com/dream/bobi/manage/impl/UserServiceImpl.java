@@ -109,6 +109,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserEntity getUser(String token) {
         Long userIdObj = TokenService.userTokens.getIfPresent(token);
+        log.info("UserServiceImpl get user, the token = {}, the userIdObj = {}", token, userIdObj);
         if (userIdObj == null){
             throw new BizException(MsgCode.SYS_INVALID_LOGIN);
         }
