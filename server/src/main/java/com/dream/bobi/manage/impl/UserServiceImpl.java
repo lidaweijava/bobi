@@ -120,6 +120,10 @@ public class UserServiceImpl implements UserService {
         return userEntity;
     }
 
+    @Override
+    public void deleteUser(Long userId) {
+        userMapper.deleteByPrimaryKey(userId);
+    }
 
     private String setLoginToken(Long userId) {
         //生成对应的token
@@ -127,6 +131,11 @@ public class UserServiceImpl implements UserService {
         //key为自定义令牌,用户的userId作作为value 存放在redis中
         TokenService.userTokens.put(token,userId);
         return token;
+    }
+    public void removeLoginToken(String token) {
+        //生成对应的token
+        //key为自定义令牌,用户的userId作作为value 存放在redis中
+        TokenService.userTokens.put(token,0L);
     }
 
     @Override

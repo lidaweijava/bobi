@@ -32,6 +32,8 @@ public interface UserApi {
     @PostMapping("/loginWithCode")
     public Map<String, Object> loginWithCode(@RequestBody LoginRequest loginRequest);
 
+    @PostMapping("/remove")
+    Map<String, Object> removeUser(@RequestParam("token") String token);
     /**
      * 使用 Token 查找用户信息
      *

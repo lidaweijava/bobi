@@ -26,6 +26,8 @@ public interface UserService {
     public String login(UserEntity userEntity);
 
     public UserEntity getUser(String token);
+    public void deleteUser(Long userId);
+    public void removeLoginToken(String token);
     public UserEntity getUserById(Long userId);
 
     public UserEntity findUser(String phone);

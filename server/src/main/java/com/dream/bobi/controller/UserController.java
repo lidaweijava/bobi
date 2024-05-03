@@ -116,6 +116,24 @@ public class UserController extends BaseApiService implements UserApi {
             return setSystemError();
         }
     }
+    @Override
+    public Map<String, Object> removeUser(@RequestParam("token") String token) {
+        if (StringUtils.isEmpty(token)){
+            return setResultParameterError(MsgCode.SYS_TOKEN_NOT_NULL);
+        }
+        try {
+            UserEntity user = userService.getUser(token);
+            userService.deleteUser(user.getId());
+            userService.removeLoginToken(token);
+            return setResultSuccessData(null);
+        }catch (BizException e){
+            log.error("removeUser error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("removeUser error ",e);
+            return setSystemError();
+        }
+    }
 
 
     @Override
