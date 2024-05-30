@@ -34,6 +34,8 @@ public class DateUtils {
     public static String DATE_TO_STRING_SHORT_PATTERN = "yyyy-MM-dd";
     public static String YEAR_AND_MONTH_PATTERN = "yyyyMM";
 
+    public static String YEAR_AND_MONTH_DAY_PATTERN = "yyyyMMdd";
+
     private static SimpleDateFormat simpleDateFormat;
 
     /**
@@ -147,6 +149,15 @@ public class DateUtils {
         calendar.set(year, month - 1, 1); // 设置日期为指定月份第一天
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
+    public static Date tomorrowEndTime() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DATE,1);
+        calendar.set(Calendar.HOUR,23);
+        calendar.set(Calendar.MINUTE,59);
+        calendar.set(Calendar.SECOND,59);
+        calendar.set(Calendar.MILLISECOND,999);
+        return calendar.getTime();
+    }
     public static int calcDaysInMonth(String yearAndMonth) {
         SimpleDateFormat formator = new SimpleDateFormat(YEAR_AND_MONTH_PATTERN);
         Date date = null;
@@ -169,4 +180,12 @@ public class DateUtils {
         return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
+    public static int currentDayYYYYMMDD() {
+        String date = currentFormatDate(YEAR_AND_MONTH_DAY_PATTERN);
+        return Integer.parseInt(date);
+    }
+    public static int currentMonthYYYYMM() {
+        String date = currentFormatDate(YEAR_AND_MONTH_PATTERN);
+        return Integer.parseInt(date);
+    }
 }

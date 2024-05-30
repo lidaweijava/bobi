@@ -40,6 +40,12 @@ public class UserEntity extends BaseEntity {
 
     private Long money;
 
+    private Boolean isVip;
+
+    private Date vipEndTime;
+
+
+
     public String getUserName() {
         return userName;
     }
@@ -110,5 +116,21 @@ public class UserEntity extends BaseEntity {
 
     public void setMoney(Long money) {
         this.money = money;
+    }
+
+    public Boolean getVip() {
+        return isVip;
+    }
+
+    public void setVip(Boolean vip) {
+        isVip = vip;
+    }
+
+    public Date getVipEndTime() {
+        return vipEndTime;
+    }
+
+    public void setVipEndTime(Date vipEndTime) {
+        this.vipEndTime = vipEndTime;
     }
 }

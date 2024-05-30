@@ -2,6 +2,10 @@ package com.dream.bobi.controller;
 
 
 import com.dream.bobi.commons.api.LoginRequest;
+import com.dream.bobi.commons.entity.DayCount;
+import com.dream.bobi.commons.entity.TransactionLog;
+import com.dream.bobi.commons.entity.User;
+import com.dream.bobi.commons.mapper.TransactionLogMapper;
 import com.dream.bobi.support.BizException;
 import com.dream.bobi.commons.api.BaseApiService;
 import com.dream.bobi.commons.api.UserApi;
@@ -12,10 +16,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -116,6 +123,21 @@ public class UserController extends BaseApiService implements UserApi {
             return setSystemError();
         }
     }
+
+    @Override
+    public Map<String, Object> loginWithAppleToken(String appleToken) {
+        try {
+            String token = userService.loginWithAppleToken(appleToken);
+            return setResultSuccessData(token);
+        }catch (BizException e){
+            log.error("loginWithCode error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("loginWithCode error ",e);
+            return setSystemError();
+        }
+    }
+
     @Override
     public Map<String, Object> removeUser(@RequestParam("token") String token) {
         if (StringUtils.isEmpty(token)){
@@ -186,4 +208,43 @@ public class UserController extends BaseApiService implements UserApi {
             return setResultError(e.getMessage());
         }
     }
+
+
+    @Autowired
+    TransactionLogMapper transactionLogMapper;
+
+    @GetMapping("/transLogs")
+    public Map<String,Object> transactionLogs(@RequestParam String token) {
+        try {
+            UserEntity user = userService.getUser(token);
+            Example example = new Example(TransactionLog.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",user.getId());
+            example.setOrderByClause("id desc limit 50");
+            List<TransactionLog> transactionLogs = transactionLogMapper.selectByExample(example);
+            return setResultSuccessData(transactionLogs);
+        }catch (BizException e){
+            log.error("dayCountByMonth error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("dayCountByMonth error ",e);
+            return setSystemError();
+        }
+    }
+
+    @GetMapping("/isVip")
+    public Map<String,Object> isVip(@RequestParam String token) {
+        try {
+            UserEntity user = userService.getUser(token);
+            Boolean vip = userService.isVip(user.getId());
+            return setResultSuccessData(vip);
+        }catch (BizException e){
+            log.error("isVip error {}",e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        }catch (Exception e){
+            log.error("isVip error ",e);
+            return setSystemError();
+        }
+    }
+
 }

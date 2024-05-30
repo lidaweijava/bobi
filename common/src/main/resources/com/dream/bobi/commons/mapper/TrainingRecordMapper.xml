@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dream.bobi.commons.mapper.TrainingRecordMapper">
+    <resultMap id="BaseResultMap" type="com.dream.bobi.commons.entity.TrainingRecord">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="user_id" jdbcType="BIGINT" property="userId" />
+        <result column="training_code" jdbcType="VARCHAR" property="trainingCode" />
+        <result column="take" jdbcType="INTEGER" property="take" />
+        <result column="day" jdbcType="INTEGER" property="day" />
+        <result column="month" jdbcType="INTEGER" property="month" />
+        <result column="award" jdbcType="INTEGER" property="award" />
+        <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+        <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+    <resultMap id="dayCountMap" type="com.dream.bobi.commons.entity.DayCount">
+        <result column="day" jdbcType="INTEGER" property="day" />
+        <result column="count" jdbcType="INTEGER" property="count" />
+    </resultMap>
+    <select id="selectMonthList" resultType="java.lang.Integer">
+       select distinct(month) from training_record where user_id = ${userId}
+    </select>
+    <select id="sumTakesGroupByDayPerMonth" resultMap="dayCountMap">
+       select day, sum(`take`) as `count` from training_record where user_id = ${userId} and month= ${month} group by day
+    </select>
+</mapper>

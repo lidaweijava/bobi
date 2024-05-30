@@ -1,11 +1,12 @@
 package com.dream.bobi.commons.api;
 
+import com.dream.bobi.commons.entity.TransactionLog;
+import com.dream.bobi.commons.entity.User;
 import com.dream.bobi.commons.entity.UserEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Example;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -32,6 +33,8 @@ public interface UserApi {
     @PostMapping("/loginWithCode")
     public Map<String, Object> loginWithCode(@RequestBody LoginRequest loginRequest);
 
+    @PostMapping("/loginWithAppleToken")
+    public Map<String, Object> loginWithAppleToken(@RequestParam("appleToken") String appleToken);
     @PostMapping("/remove")
     Map<String, Object> removeUser(@RequestParam("token") String token);
     /**

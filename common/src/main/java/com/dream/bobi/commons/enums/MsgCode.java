@@ -30,6 +30,11 @@ public enum MsgCode {
     CHALLENGE_NOT_FOUND(50019, "挑战记录未找到"),
     VERIFY_CODE_NOT_NULL(50020, "验证码不能为空!"),
 
+    UPLOAD_FAILED(51001, "文件上传失败"),
+    INVALID_CODE(51002, "无效的code"),
+    CODE_HAS_BEEN_USED(51003, "code已经被使用"),
+    CODE_USED_EXCEED_LIMIT(51004, "code使用超过次数限制"),
+
     OTHER(59999, "其他");
 
 

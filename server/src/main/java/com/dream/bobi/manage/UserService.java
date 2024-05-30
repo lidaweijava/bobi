@@ -36,4 +36,8 @@ public interface UserService {
     Long deduct(Long userId, Long money);
 
     String loginWithCode(LoginRequest loginRequest);
+
+    String loginWithAppleToken(String appleToken);
+
+    Boolean isVip(Long userId);
 }

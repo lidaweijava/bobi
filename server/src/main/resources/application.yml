@@ -26,7 +26,7 @@ spring:
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
 
-
-
-
-
+  http:
+    multipart:
+      maxFileSize: 50Mb
+      maxRequestSize: 50Mb

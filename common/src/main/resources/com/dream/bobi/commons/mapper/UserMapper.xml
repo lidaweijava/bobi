@@ -14,6 +14,8 @@
     <result column="money" jdbcType="BIGINT" property="money" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="is_vip" jdbcType="TINYINT" property="isVip" />
+    <result column="vip_end_time" jdbcType="TIMESTAMP" property="vipEndTime" />
   </resultMap>
   <update id="increaseMoney">
     update user set money = money+${money} where id = ${userId}
