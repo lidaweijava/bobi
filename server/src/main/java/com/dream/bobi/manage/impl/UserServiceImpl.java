@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword("");
         user.setEmail("");
         user.setToken(appleToken);
-        user.setUserName("user_apple_"+appleToken.substring(8));
+        user.setUserName("user_apple_token");
         userMapper.insertSelective(user);
         return setLoginToken(user.getId());
     }
