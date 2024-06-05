@@ -1,8 +1,13 @@
 package com.dream.bobi.commons.entity;
 
+import javax.persistence.Column;
+import javax.persistence.Table;
 import java.util.Date;
 
-public class Code extends BaseEntity{
+@Table(name="training_code")
+public class TrainingCode extends BaseEntity{
+
+    @Column(name = "`code`")
     private String code;
 
     private Long userId;

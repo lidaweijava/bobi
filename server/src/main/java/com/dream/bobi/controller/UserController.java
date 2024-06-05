@@ -125,9 +125,12 @@ public class UserController extends BaseApiService implements UserApi {
     }
 
     @Override
-    public Map<String, Object> loginWithAppleToken(String appleToken) {
+    public Map<String, Object> loginWithAppleToken(@RequestBody LoginRequest loginRequest) {
+        if(StringUtils.isBlank(loginRequest.getAppleToken())){
+            return setResultError(MsgCode.SYS_PARAM_ERROR);
+        }
         try {
-            String token = userService.loginWithAppleToken(appleToken);
+            String token = userService.loginWithAppleToken(loginRequest.getAppleToken());
             return setResultSuccessData(token);
         }catch (BizException e){
             log.error("loginWithCode error {}",e.getMsgCode().getMessage());

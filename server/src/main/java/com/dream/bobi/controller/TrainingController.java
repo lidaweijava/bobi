@@ -5,7 +5,7 @@ import com.dream.bobi.commons.api.BaseApiService;
 import com.dream.bobi.commons.entity.*;
 import com.dream.bobi.commons.enums.MsgCode;
 import com.dream.bobi.commons.mapper.BannerMapper;
-import com.dream.bobi.commons.mapper.CodeMapper;
+import com.dream.bobi.commons.mapper.TrainingCodeMapper;
 import com.dream.bobi.commons.mapper.TrainingRecordMapper;
 import com.dream.bobi.commons.mapper.UserMapper;
 import com.dream.bobi.commons.utils.CustomEncryptor;
@@ -32,7 +32,7 @@ public class TrainingController extends BaseApiService {
     @Autowired
     TrainingRecordMapper trainingRecordMapper;
     @Autowired
-    CodeMapper codeMapper;
+    TrainingCodeMapper trainingCodeMapper;
 
     @Autowired
     UserMapper userMapper;
@@ -98,24 +98,24 @@ public class TrainingController extends BaseApiService {
     public Map<String, Object> useCode(@RequestParam String token, @RequestParam String code) {
         try {
             UserEntity user = userService.getUser(token);
-            Example example = new Example(Code.class);
+            Example example = new Example(TrainingCode.class);
             Example.Criteria criteria = example.createCriteria();
             criteria.andEqualTo("code", code);
-            Code exist = codeMapper.selectOneByExample(example);
+            TrainingCode exist = trainingCodeMapper.selectOneByExample(example);
             if (exist == null) {
                 return setResultError(MsgCode.INVALID_CODE);
             }
             if (exist.getStatus() == 1) {
                 return setResultError(MsgCode.CODE_HAS_BEEN_USED);
             }
-            Code code4Update = new Code();
-            code4Update.setCode(code);
-            code4Update.setStatus(1);
-            code4Update.setUseTime(new Date());
-            code4Update.setUserId(user.getId());
-            code4Update.setId(exist.getId());
+            TrainingCode trainingCode4Update = new TrainingCode();
+            trainingCode4Update.setCode(code);
+            trainingCode4Update.setStatus(1);
+            trainingCode4Update.setUseTime(new Date());
+            trainingCode4Update.setUserId(user.getId());
+            trainingCode4Update.setId(exist.getId());
             try {
-                codeMapper.updateByPrimaryKeySelective(code4Update);
+                trainingCodeMapper.updateByPrimaryKeySelective(trainingCode4Update);
             } catch (Exception e) {
                 return setResultError(MsgCode.CODE_USED_EXCEED_LIMIT);
             }
@@ -141,25 +141,25 @@ public class TrainingController extends BaseApiService {
             return setResultError(MsgCode.SYS_PARAM_ERROR);
         }
         int from = 1;
-        Example example = new Example(Code.class);
-        example.setOrderByClause("id desc");
-        Code code = codeMapper.selectOneByExample(example);
-        if (code != null) {
-            from = Math.toIntExact(code.getId())+1;
+        Example example = new Example(TrainingCode.class);
+        example.setOrderByClause("id desc limit 1");
+        TrainingCode trainingCode = trainingCodeMapper.selectOneByExample(example);
+        if (trainingCode != null) {
+            from = Math.toIntExact(trainingCode.getId())+1;
         }
         try {
-            List<Code> codes = new ArrayList<>();
+            List<TrainingCode> trainingCodes = new ArrayList<>();
             List<String> returnCodes = new ArrayList<>();
-            for (int i = from; i <= count; i++) {
+            for (int i = from; i <= count+from; i++) {
                 String s = CustomEncryptor.encryptInt(i);
-                Code c = new Code();
+                TrainingCode c = new TrainingCode();
                 c.setId((long) i);
                 c.setCode(s);
                 c.setStatus(0);
-                codes.add(c);
+                trainingCodes.add(c);
                 returnCodes.add(s);
             }
-            codeMapper.insertList(codes);
+            trainingCodeMapper.insertList(trainingCodes);
             return setResultSuccessData(returnCodes);
         } catch (BizException e) {
             log.error("exportCodes error {}", e.getMsgCode().getMessage());

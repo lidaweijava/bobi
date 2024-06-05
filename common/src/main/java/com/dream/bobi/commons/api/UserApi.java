@@ -34,7 +34,7 @@ public interface UserApi {
     public Map<String, Object> loginWithCode(@RequestBody LoginRequest loginRequest);
 
     @PostMapping("/loginWithAppleToken")
-    public Map<String, Object> loginWithAppleToken(@RequestParam("appleToken") String appleToken);
+    public Map<String, Object> loginWithAppleToken(@RequestBody LoginRequest loginRequest);
     @PostMapping("/remove")
     Map<String, Object> removeUser(@RequestParam("token") String token);
     /**

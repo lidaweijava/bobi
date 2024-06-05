@@ -4,6 +4,9 @@ public class LoginRequest {
     private String phone;
     private String code;
 
+    private String appleToken;
+
+
     public String getPhone() {
         return phone;
     }
@@ -18,5 +21,13 @@ public class LoginRequest {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getAppleToken() {
+        return appleToken;
+    }
+
+    public void setAppleToken(String appleToken) {
+        this.appleToken = appleToken;
     }
 }
