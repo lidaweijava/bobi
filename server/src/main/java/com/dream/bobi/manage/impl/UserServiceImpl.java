@@ -14,6 +14,7 @@ import com.dream.bobi.commons.utils.DateUtils;
 import com.dream.bobi.commons.utils.MD5Util;
 import com.dream.bobi.commons.utils.TokenUtils;
 import com.dream.bobi.manage.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -139,6 +140,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUser(String token) {
+        if(StringUtils.isBlank(token)){
+            throw new BizException(MsgCode.SYS_TOKEN_NOT_NULL);
+        }
         Long userIdObj = CacheService.userTokens.getIfPresent(token);
         log.info("UserServiceImpl get user, the token = {}, the userIdObj = {}", token, userIdObj);
         if (userIdObj == null){

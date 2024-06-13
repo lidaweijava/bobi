@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class TrainingController extends BaseApiService {
@@ -93,6 +94,25 @@ public class TrainingController extends BaseApiService {
             return setSystemError();
         }
     }
+    @GetMapping("/training/dailyRecords")
+    public Map<String, Object> dailyRecords(@RequestParam String token, @RequestParam Integer day) {
+        try {
+            UserEntity user = userService.getUser(token);
+            Example example = new Example(TrainingRecord.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",user.getId());
+            criteria.andEqualTo("day",day);
+            example.setOrderByClause("id desc limit 1000");
+            List<TrainingRecord> trainingRecords = trainingRecordMapper.selectByExample(example);
+            return setResultSuccessData(trainingRecords);
+        } catch (BizException e) {
+            log.error("dailyRecords error {}", e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("dailyRecords error ", e);
+            return setSystemError();
+        }
+    }
 
     @PostMapping("/training/useCode")
     public Map<String, Object> useCode(@RequestParam String token, @RequestParam String code) {
@@ -126,7 +146,7 @@ public class TrainingController extends BaseApiService {
             userMapper.updateByPrimaryKeySelective(userInDB);
             return setResultSuccessData(null);
         } catch (BizException e) {
-            log.error("useCode error {}", e.getMsgCode().getMessage());
+            log.error("useCode error，", e);
             return setResultError(e.getMsgCode());
         } catch (Exception e) {
             log.error("useCode error ", e);
@@ -171,16 +191,29 @@ public class TrainingController extends BaseApiService {
     }
 
     @GetMapping("/training/bannerList")
-    public Map<String, Object> bannerList() {
+    public Map<String, Object> bannerList(BannerRequest bannerRequest) {
 
         try {
             List<Banner> bannersInCache = (List<Banner>) CacheService.configs.getIfPresent("banners");
             if(!CollectionUtils.isEmpty(bannersInCache)){
+
+                if(bannerRequest.getType() != null){
+                    List<Banner> bannersByType = bannersInCache.stream().filter(o -> o.equals(bannerRequest.getType())).collect(Collectors.toList());
+                    return setResultSuccessData(bannersByType);
+                }
                 return setResultSuccessData(bannersInCache);
             }
-            List<Banner> banners = bannerMapper.selectAll();
-            CacheService.configs.put("banners",banners);
-            return setResultSuccessData(banners);
+            if(bannerRequest.getType() != null){
+                Example example = new Example(Banner.class);
+                Example.Criteria criteria = example.createCriteria();
+                criteria.andEqualTo("type",bannerRequest.getType());
+                List<Banner> banners = bannerMapper.selectByExample(example);
+                return setResultSuccessData(banners);
+            }else{
+                List<Banner> banners = bannerMapper.selectAll();
+                CacheService.configs.put("banners",banners);
+                return setResultSuccessData(banners);
+            }
         } catch (BizException e) {
             log.error("bannerList error {}", e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());

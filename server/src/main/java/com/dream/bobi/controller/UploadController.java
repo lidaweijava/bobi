@@ -52,8 +52,8 @@ public class UploadController extends BaseApiService {
             return setResultError(MsgCode.UPLOAD_FAILED);
         }
     }
-    @PostMapping("/training/report/delete/{id}")
-    public Map<String, Object> deleteRecord(@RequestParam String token,@PathVariable Long id){
+    @PostMapping("/training/report/delete")
+    public Map<String, Object> deleteRecord(@RequestParam String token,@RequestParam Long id){
         try {
             userService.getUser(token);
             UploadRecord uploadRecord = new UploadRecord();
