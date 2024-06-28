@@ -6,7 +6,7 @@ spring:
   #数据库连接信息
   datasource:
     name: ds1
-    url: jdbc:mysql://sh-cynosdbmysql-grp-m1sf60z6.sql.tencentcdb.com:25942/pet?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://sh-cdb-lkmdzkn4.sql.tencentcdb.com:29851/pet?useSSL=false&useUnicode=true&characterEncoding=UTF8&serverTimezone=GMT&allowPublicKeyRetrieval=true
     username: root
     password: Ldw@123456
     # 使用druid数据源
