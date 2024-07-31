@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>啵比 - 口才练习</title>
+    <link rel="stylesheet" href="merge.css">
+</head>
+<body>
+    <header>
+        <div class="logo">啵比</div>
+        <nav>
+            <a href="#">English</a>
+            <a href="#">充值入口</a>
+            <a href="#">意见反馈</a>
+        </nav>
+    </header>
+    <div class="page" id="page1" >
+        <main>
+            <section class="content">
+                <div class="left">
+                    <h1>啵比 - 江湖小狗</h1>
+                    <p>你的专属AI数码宝贝</p>
+                    <div class="download-buttons">
+                        <a href="https://apps.apple.com/cn/app/%E5%95%B5%E6%AF%94/id6474822846" target="_blank" class="ios">iOS下载</a>
+                        <a href="https://1drv.ms/u/s!AqwvvteFf51_gRHOr4ihKMhPv-sH?e=CZcVFo" class="android">安卓下载</a>
+                    </div>
+                    
+                </div>
+                <div class="right">
+                    <div class="image-container">
+                        <img src="images/dog.png" alt="手机图片" class="phone">
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div class="next-page">
+            <img src="images/next.png" alt="下一页" onclick="nextPage()">
+        </div>
+    </div>
+    <div class="page" id="page2" style="display:none;">
+        <main>
+            <section class="content">
+                <div class="left">
+                    <div class="image-container">
+                        <img src="images/guajian.png" alt="手机图片" class="phone">
+                    </div>
+                </div>
+                <div class="right">
+                    <h1>随地陪伴</h1>
+                    <p>可爱挂件 旺运法宝</p>
+                    <div class="download-buttons">
+                        <a href="https://apps.apple.com/cn/app/%E5%95%B5%E6%AF%94/id6474822846" target="_blank" class="ios">iOS下载</a>
+                        <a href="https://1drv.ms/u/s!AqwvvteFf51_gRHOr4ihKMhPv-sH?e=CZcVFo" class="android">安卓下载</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div class="next-page">
+            <img src="images/next.png" alt="下一页" onclick="nextPage()">
+        </div>
+    </div>
+
+    <div class="page" id="page3" style="display:none;">
+        <main>
+            <section class="content">
+                <div class="left">
+                    <div class="image-container">
+                        <img src="images/chat_dog.png" alt="手机图片" class="phone">
+                    </div>
+                </div>
+                <div class="right">
+                    <h1>狗君请回答</h1>
+                    <p>有趣对话 暖心陪伴</p>
+                    <div class="download-buttons">
+                        <a href="https://apps.apple.com/cn/app/%E5%95%B5%E6%AF%94/id6474822846" target="_blank" class="ios">iOS下载</a>
+                        <a href="https://1drv.ms/u/s!AqwvvteFf51_gRHOr4ihKMhPv-sH?e=CZcVFo" class="android">安卓下载</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div class="next-page">
+            <img src="images/next.png" alt="下一页" onclick="nextPage()">
+        </div>
+    </div>
+
+    <div class="page" id="page4" style="display:none;">
+        <main>
+            <section class="content">
+                <div class="left">
+                    <h1>口才练习</h1>
+                    <p>恋爱模拟 职场模拟</p>
+                    <div class="download-buttons">
+                        <a href="https://apps.apple.com/cn/app/%E5%95%B5%E6%AF%94/id6474822846" target="_blank" class="ios">iOS下载</a>
+                        <a href="https://1drv.ms/u/s!AqwvvteFf51_gRHOr4ihKMhPv-sH?e=CZcVFo" class="android">安卓下载</a>
+                    </div>
+                </div>
+                <div class="right">
+                    <div class="image-container">
+                        <img src="images/game_dog.png" alt="手机图片" class="phone">
+                    </div>
+                </div>
+            </section>
+        </main>
+        <div class="next-page" style="display:none;">
+            <img src="next.png" alt="下一页" onclick="nextPage()">
+        </div>
+    </div>
+
+    <footer>
+        <p>用户协议 | 隐私政策 | 京公网安备 11010802039806号 | 联系我们: yufei377153（微信） | 交流反馈: 783754448（QQ群）</p>
+    </footer>
+
+    <script>
+        let currentPage = 1;
+        const backgrounds = [
+            'background_main.png',
+            'green_bg.png',
+            'light_green_bg.png',
+            'purple_bg.png'
+        ];
+
+        function nextPage() {
+            if (currentPage < 4) {
+                document.getElementById('page' + currentPage).style.display = 'none';
+                currentPage++;
+                document.getElementById('page' + currentPage).style.display = 'block';
+                document.body.style.backgroundImage = 'url(' + 'images/' + backgrounds[currentPage - 1] + ')';
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                document.getElementById('page' + currentPage).style.display = 'none';
+                currentPage--;
+                document.getElementById('page' + currentPage).style.display = 'block';
+                document.body.style.backgroundImage = 'url(' + 'images/' + backgrounds[currentPage - 1] + ')';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            document.body.style.backgroundImage = 'url(' + 'images/' + backgrounds[0] + ')';
+        });
+        let lastScrollTime = 0;
+        const scrollThreshold = 1000; // 滚动间隔阈值，单位为毫秒
+
+        window.addEventListener('wheel', (event) => {
+            const currentTime = new Date().getTime();
+            if (currentTime - lastScrollTime > scrollThreshold) {
+                if (event.deltaY < 0) {
+                    prevPage();
+                } else if (event.deltaY > 0) {
+                    nextPage();
+                }
+                
+                lastScrollTime = currentTime;
+            }
+        });
+         // 平滑滚动函数
+        function smoothScroll(target) {
+            document.querySelector(target).scrollIntoView({
+                behavior: 'smooth'
+            });
+        }
+    </script>
+</body>
+</html>

@@ -240,7 +240,11 @@ public class UserController extends BaseApiService implements UserApi {
         try {
             UserEntity user = userService.getUser(token);
             Boolean vip = userService.isVip(user.getId());
-            return setResultSuccessData(vip);
+            if(vip && user.getVipEndTime().getTime()< System.currentTimeMillis()){
+                return setResultSuccessData(true);
+            }else{
+                return setResultSuccessData(false);
+            }
         }catch (BizException e){
             log.error("isVip error {}",e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());

@@ -57,7 +57,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("redirect:/static/files/html/history.html");
+        registry.addViewController("/").setViewName("redirect:/static/merge.html");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
