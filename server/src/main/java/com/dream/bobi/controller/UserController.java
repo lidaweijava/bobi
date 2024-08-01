@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -168,6 +169,8 @@ public class UserController extends BaseApiService implements UserApi {
         }
         try {
             UserEntity user = userService.getUser(token);
+            boolean vip = user.getVip() && user.getVipEndTime().after(new Date());
+            user.setVip(vip);
             return setResultSuccessData(user);
         }catch (BizException e){
             log.error("getUser failed ", e);
@@ -240,11 +243,7 @@ public class UserController extends BaseApiService implements UserApi {
         try {
             UserEntity user = userService.getUser(token);
             Boolean vip = userService.isVip(user.getId());
-            if(vip && user.getVipEndTime().getTime()< System.currentTimeMillis()){
-                return setResultSuccessData(true);
-            }else{
-                return setResultSuccessData(false);
-            }
+            return setResultSuccessData(vip);
         }catch (BizException e){
             log.error("isVip error {}",e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());

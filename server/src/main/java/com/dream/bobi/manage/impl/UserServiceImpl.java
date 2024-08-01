@@ -151,6 +151,7 @@ public class UserServiceImpl implements UserService {
         User user = userMapper.selectByPrimaryKey(userIdObj);
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(user,userEntity);
+
         userEntity.setPassword(null);
         return userEntity;
     }
