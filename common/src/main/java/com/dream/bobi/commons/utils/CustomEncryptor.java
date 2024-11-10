@@ -4,10 +4,14 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
 import org.apache.commons.codec.binary.Base32;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 public class CustomEncryptor {
+    private final static Logger log = LoggerFactory.getLogger(CustomEncryptor.class);
     private static final int KEY_SIZE = 128; // AES密钥大小
     private static final int OUTPUT_LENGTH = 8; // 8个字符
 
@@ -37,5 +41,4 @@ public class CustomEncryptor {
             throw new RuntimeException(e);
         }
     }
-
 }

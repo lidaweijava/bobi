@@ -34,6 +34,9 @@ public enum MsgCode {
     INVALID_CODE(51002, "无效的code"),
     CODE_HAS_BEEN_USED(51003, "code已经被使用"),
     CODE_USED_EXCEED_LIMIT(51004, "code使用超过次数限制"),
+    FRIEND_ENCRYPT_FAIL(50020, "复制口令加密失败"),
+    FRIEND_PASTE_FAIL(50021, "粘贴口令失败"),
+    INVITE_FRIEND_FAIL(50022, "好友邀请失败失败"),
 
     OTHER(59999, "其他");
 
