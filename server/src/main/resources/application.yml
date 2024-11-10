@@ -25,7 +25,6 @@ spring:
     testOnReturn: false
     poolPreparedStatements: true
     maxOpenPreparedStatements: 20
-
   http:
     multipart:
       maxFileSize: 50Mb
