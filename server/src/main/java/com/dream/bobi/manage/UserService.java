@@ -3,6 +3,7 @@ package com.dream.bobi.manage;
 import com.dream.bobi.commons.api.LoginRequest;
 import com.dream.bobi.commons.entity.UserEntity;
 
+import java.util.List;
 
 
 public interface UserService {
@@ -40,4 +41,6 @@ public interface UserService {
     String loginWithAppleToken(String appleToken);
 
     Boolean isVip(Long userId);
+
+    List<UserEntity> getUserByIdList(List<Long> userIdList);
 }

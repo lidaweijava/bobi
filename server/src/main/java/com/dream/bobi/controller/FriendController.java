@@ -1,18 +1,19 @@
 package com.dream.bobi.controller;
 
 import com.dream.bobi.commons.api.BaseApiService;
-import com.dream.bobi.commons.entity.ChatHistory;
 import com.dream.bobi.commons.entity.InviteFriendRecord;
 import com.dream.bobi.commons.entity.UserEntity;
 import com.dream.bobi.commons.enums.InviteFriendStatus;
 import com.dream.bobi.commons.mapper.InviteFriendRecordMapper;
-import com.dream.bobi.commons.utils.DesUtil;
+import com.dream.bobi.commons.utils.EncryptionUtil;
 import com.dream.bobi.manage.UserService;
 import com.dream.bobi.support.BizException;
 import com.mysql.cj.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,7 @@ import tk.mybatis.mapper.entity.Example;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.dream.bobi.commons.enums.MsgCode.FRIEND_ENCRYPT_FAIL;
 import static com.dream.bobi.commons.enums.MsgCode.SYS_PARAM_ERROR;
@@ -28,6 +30,8 @@ import static com.dream.bobi.commons.enums.MsgCode.SYS_PARAM_ERROR;
 @RestController
 public class FriendController extends BaseApiService {
     private final static Logger log = LoggerFactory.getLogger(FriendController.class);
+
+    private final static String ENTROPY_PASS_WORD = "entropy123QWE.";
 
     @Autowired
     private UserService userService;
@@ -52,7 +56,7 @@ public class FriendController extends BaseApiService {
                 throw new BizException(FRIEND_ENCRYPT_FAIL);
             }
             Map<String, Object> map = new HashMap<>();
-            map.put("encryptUserId", DesUtil.encrypt(String.valueOf(user.getId())));
+            map.put("encryptUserId", EncryptionUtil.encryptWithAES(String.valueOf(user.getId()), ENTROPY_PASS_WORD));
             return setResultSuccessData(map);
         } catch (BizException e) {
             log.error("encrypt error {}, token:{}", token, e.getMsgCode().getMessage());
@@ -68,11 +72,12 @@ public class FriendController extends BaseApiService {
      * @param encryptUserId
      * @return
      */
-    @PostMapping("friend/paste")
+    @GetMapping("friend/paste")
     public Map<String, Object> decryptPasteContent(@RequestParam String encryptUserId) {
         try {
             Map<String, Object> map = new HashMap<>();
-            String value = DesUtil.decrypt(encryptUserId);
+            encryptUserId = encryptUserId.replaceAll(" ","+");
+            String value = EncryptionUtil.decryptWithAES(encryptUserId, ENTROPY_PASS_WORD);
             if (StringUtils.isNullOrEmpty(value)) {
                 log.error("FriendController decryptPasteContent parse fail, the encryptUserId:{}", encryptUserId);
                 throw new BizException(FRIEND_ENCRYPT_FAIL);
@@ -97,8 +102,8 @@ public class FriendController extends BaseApiService {
      * @return
      */
     @PostMapping("/friend/invite/send")
-    public Map<String, Object> inviteFriend(@RequestParam String token, @RequestParam Long targetUserId
-            , @RequestParam String targetPhone) {
+    public Map<String, Object> inviteFriend(@RequestParam String token, @RequestParam(required = false) Long targetUserId
+            , @RequestParam(required = false) String targetPhone) {
         try {
             if (StringUtils.isNullOrEmpty(token)) {
                 log.error("FriendController inviteFriend token is null");
@@ -142,7 +147,7 @@ public class FriendController extends BaseApiService {
      * @param token
      * @return
      */
-    @PostMapping("friend/beInvite/query")
+    @GetMapping("friend/beInvite/query")
     public Map<String, Object> getBeInviteList(@RequestParam String token) {
         try {
             if (StringUtils.isNullOrEmpty(token)) {
@@ -151,7 +156,7 @@ public class FriendController extends BaseApiService {
             }
             UserEntity user = userService.getUser(token);
             if (user == null || user.getId() == null){
-                log.error("FriendController encrypt parse fail, the token:{}", token);
+                log.error("FriendController getBeInviteList fail, the token:{}", token);
                 throw new BizException(SYS_PARAM_ERROR);
             }
 
@@ -160,7 +165,11 @@ public class FriendController extends BaseApiService {
             criteria.andEqualTo("targetUserId",user.getId());
             criteria.andEqualTo("status", InviteFriendStatus.INVITE.getStatus());
             List<InviteFriendRecord> inviteFriendRecords = inviteFriendRecordMapper.selectByExample(example);
-            return setResultSuccessData(inviteFriendRecords);
+            if (CollectionUtils.isEmpty(inviteFriendRecords)) {
+                return setResultSuccess();
+            }
+            List<Long> userIdList = inviteFriendRecords.stream().map(InviteFriendRecord::getTargetUserId).collect(Collectors.toList());
+            return setResultSuccessData(userService.getUserByIdList(userIdList));
         } catch (BizException e) {
             log.error("getBeInviteList error {}, token:{}", token, e.getMsgCode().getMessage());
             return setResultError(e.getMsgCode());
@@ -187,8 +196,19 @@ public class FriendController extends BaseApiService {
                 log.error("FriendController agreeInviteFriend parse fail, the token:{}", token);
                 throw new BizException(SYS_PARAM_ERROR);
             }
+
+            Example example = new Example(InviteFriendRecord.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",inviteId);
+            criteria.andEqualTo("targetUserId",user.getId());
+            criteria.andEqualTo("status", InviteFriendStatus.INVITE.getStatus());
+            List<InviteFriendRecord> inviteFriendRecords = inviteFriendRecordMapper.selectByExample(example);
+            if (CollectionUtils.isEmpty(inviteFriendRecords)){
+                return setResultSuccess();
+            }
+            //update记录
             InviteFriendRecord inviteFriendRecord = new InviteFriendRecord();
-            inviteFriendRecord.setId(inviteId);
+            inviteFriendRecord.setId(inviteFriendRecords.get(0).getId());
             inviteFriendRecord.setStatus(InviteFriendStatus.AGREE.getStatus());
             inviteFriendRecordMapper.updateByPrimaryKeySelective(inviteFriendRecord);
             return setResultSuccess();
@@ -206,7 +226,7 @@ public class FriendController extends BaseApiService {
      * @param phone
      * @return
      */
-    @PostMapping("/v1/user/check")
+    @GetMapping("/v1/user/check")
     public Map<String, Object> checkUser(@RequestParam String phone) {
         try {
             if (StringUtils.isNullOrEmpty(phone)) {
@@ -215,7 +235,7 @@ public class FriendController extends BaseApiService {
             }
             UserEntity user = userService.findUser(phone);
             Map<String, Object> map = new HashMap<>();
-            if (user == null || user.getId() == null){
+            if (user == null){
                 map.put("userFlag", false);
             }else {
                 map.put("userFlag", true);
@@ -226,6 +246,43 @@ public class FriendController extends BaseApiService {
             return setResultError(e.getMsgCode());
         } catch (Exception e) {
             log.error("encrypt error, the phone:{}", phone, e);
+            return setSystemError();
+        }
+    }
+
+    /**
+     * 我的bobi好友
+     * @param token
+     * @return
+     */
+    @GetMapping("friend/my/query")
+    public Map<String, Object> getMyFriend(@RequestParam String token) {
+        try {
+            if (StringUtils.isNullOrEmpty(token)) {
+                log.error("FriendController getMyFriend token is null");
+                throw new BizException(SYS_PARAM_ERROR);
+            }
+            UserEntity user = userService.getUser(token);
+            if (user == null || user.getId() == null){
+                log.error("FriendController getMyFriend fail, the token:{}", token);
+                throw new BizException(SYS_PARAM_ERROR);
+            }
+
+            Example example = new Example(InviteFriendRecord.class);
+            Example.Criteria criteria = example.createCriteria();
+            criteria.andEqualTo("userId",user.getId());
+            criteria.andEqualTo("status", InviteFriendStatus.AGREE.getStatus());
+            List<InviteFriendRecord> inviteFriendRecords = inviteFriendRecordMapper.selectByExample(example);
+            if (CollectionUtils.isEmpty(inviteFriendRecords)) {
+                return null;
+            }
+            List<Long> userIdList = inviteFriendRecords.stream().map(InviteFriendRecord::getTargetUserId).collect(Collectors.toList());
+            return setResultSuccessData(userService.getUserByIdList(userIdList));
+        } catch (BizException e) {
+            log.error("getBeInviteList error {}, token:{}", token, e.getMsgCode().getMessage());
+            return setResultError(e.getMsgCode());
+        } catch (Exception e) {
+            log.error("getBeInviteList error, the token:{}", token, e);
             return setSystemError();
         }
     }

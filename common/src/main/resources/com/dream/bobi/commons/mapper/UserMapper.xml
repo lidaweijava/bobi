@@ -17,10 +17,24 @@
     <result column="is_vip" jdbcType="TINYINT" property="isVip" />
     <result column="vip_end_time" jdbcType="TIMESTAMP" property="vipEndTime" />
   </resultMap>
+  <sql id="BaseColumnList">
+    id, user_name, password, phone, email, openId, token, last_login_time, level, money, create_time, update_time, is_vip,vip_end_time
+  </sql>
   <update id="increaseMoney">
     update user set money = money+${money} where id = ${userId}
   </update>
   <update id="deductMoney">
     update user set money = money-${money} where id = ${userId} and money-${money} >0
   </update>
+
+  <select id="selectByUidList" resultMap="BaseResultMap">
+    select
+    <include refid="BaseColumnList"/>
+    from user
+    where id in
+    <foreach collection="uidList" open="(" close=")" separator="," item="uid">
+      #{uid}
+    </foreach>
+  </select>
+
 </mapper>

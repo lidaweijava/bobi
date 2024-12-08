@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -185,6 +186,7 @@ public class UserServiceImpl implements UserService {
         }else{
             User user = users.get(0);
             UserEntity userEntity = new UserEntity();
+            userEntity.setId(user.getId());
             userEntity.setUserName(user.getUserName());
             userEntity.setMoney(user.getMoney());
             userEntity.setLevel(user.getLevel());
@@ -258,5 +260,21 @@ public class UserServiceImpl implements UserService {
             throw new BizException(MsgCode.SYS_USER_IS_NOT_EXIT);
         }
         return user.getVip() && user.getVipEndTime().after(new Date());
+    }
+
+    @Override
+    public List<UserEntity> getUserByIdList(List<Long> userIdList) {
+        List<User> userList = userMapper.selectByUidList(userIdList);
+        if(CollectionUtils.isEmpty(userList)){
+            throw new BizException(MsgCode.SYS_USER_IS_NOT_EXIT);
+        }
+
+        List<UserEntity> userEntityList = new ArrayList<>();
+        for (User user : userList) {
+            UserEntity userEntity = new UserEntity();
+            BeanUtils.copyProperties(user,userEntity);
+            userEntityList.add(userEntity);
+        }
+        return userEntityList;
     }
 }
